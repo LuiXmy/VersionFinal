@@ -2,6 +2,10 @@ function gañan(a,b[],c,d){
 var gafas=2+3
 }
 
+asdf
+asdf
+asd
+fasdf
 //if (2+3<(1+2)&&1+(8+7)<33+2) if(2<3) feo=2
 
 //do{a=2+3
