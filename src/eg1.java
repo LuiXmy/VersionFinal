@@ -2,7 +2,7 @@
 import java.util.Vector;
 import java.util.HashMap;
 import java.util.LinkedList;
-// jall
+//A ver que sale ahora
 public class eg1 implements eg1Constants {
         final static int ID = 24;
         final static int ENTERO = 27;
