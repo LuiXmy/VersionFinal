@@ -80,15 +80,18 @@ public class eg1
 		System.out.println("\tcall "+ nombre + ", "+elementos.size());
 	}
 	
-	public static void usarOpInterrog(String op, String expr1, String expr2){
+	public static void usarOpInterrog(String op, String expr1, String expr2, String nombre){
 		String etiqueta1=nuevaEtq();
 		String etiqueta2=nuevaEtq();
+		String etiqueta3=nuevaEtq();
 		System.out.println("\tif "+ op +" goto "+ etiqueta1);
+		System.out.println("\telse goto "+ etiqueta2);
 		usarLabel(etiqueta1);
-		System.out.println("\ta"+"="+expr1);
-		System.out.println("\tgoto "+ etiqueta2);
-		System.out.println("\ta"+"="+expr2);
+		System.out.println("\t"+nombre+"="+expr1);
+		System.out.println("\tgoto "+ etiqueta3);
 		usarLabel(etiqueta2);
+		System.out.println("\t"+nombre+"="+expr2);
+		usarLabel(etiqueta3);
 	}
 
 	private static void condicionDo(String etiq, String op){
@@ -114,8 +117,8 @@ public class eg1
 
 	private static void usarASIG(String s, String e){
  	    System.out.println("\t"+s+"="+e);
- 	    Tercetos ter = new Tercetos();
- 	    tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion(s,e));
+ 	    Tercetos ter = new Tercetos(); 
+        tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion(s,e));
         lista.add(tupla);
 	}
 
@@ -416,7 +419,7 @@ void VectorStatement() :
 	Symbol simbolo=null;
 }
 {
-  id=< IDENTIFICADOR > "[" exp=Expresion() "]" < ASIGNACION > exp1=Expresion()
+  id=< IDENTIFICADOR > "[" exp=Expresion(id.image) "]" < ASIGNACION > exp1=Expresion("")
   {
   		simbolo=tablaactiva.obtenerSimbolo(id.image);
   		if (simbolo==null)
@@ -521,7 +524,7 @@ void IfStatement() :
 	BloqueCondicion blq = new BloqueCondicion();
 }
 {
-  < IF > expr = Expresion() {
+  < IF > expr = Expresion("") {
 									usarOpRelacional(blq, expr._str);
     								usarLabel(blq.etqVerdad);
     						}  Sentencia() {
@@ -541,7 +544,7 @@ void DoStatement() :
   		etq=nuevaEtq();
   		usarLabel(etq);
   }
-   (Sentencia())* "}" < WHILE > expr=Expresion()
+   (Sentencia())* "}" < WHILE > expr=Expresion("")
   {
   		condicionDo(etq,expr._str);
   }
@@ -552,7 +555,7 @@ void ReturnStatement() :
 		Expresion exp=null;
 }
 {
-        < RETURN > (LOOKAHEAD(2) exp=Expresion()
+        < RETURN > (LOOKAHEAD(2) exp=Expresion("")
         {
         	System.out.println(exp);
         })?
@@ -697,7 +700,7 @@ void DocumentStatement() :
 	Expresion expr=null;
 }
 {
-    < DOCUMENT > < PUNTO > < WRITE > "(" expr=Expresion() ")"
+    < DOCUMENT > < PUNTO > < WRITE > "(" expr=Expresion("") ")"
     {
     		System.out.println("\timprime "+ expr._str);
     }
@@ -840,36 +843,43 @@ void VariableDeclarator() :
      		simbolo=new Symbol(t.image, t.beginLine, ENTERO);
      		tablaactiva.insertarTS(t.image, simbolo);
      	}
-     	(< ASIGNACION > expr = Expresion()
+     	(< ASIGNACION > expr = Expresion(t.image)
      	{
-     		System.out.println("\t"+t.image+"="+expr._str); 
+			usarASIG(t.image, expr._str);
 		})?
   |
-		t = < IDENTIFICADOR > < ASIGNACION > expr = Expresion()
+		t = < IDENTIFICADOR > < ASIGNACION > expr = Expresion(t.image)
    		{
-   				if (!tablaactiva.buscar(t.image) && !tablageneral.buscar(t.image))
+   				if(expr._str!="")
    				{
+   						
+   					if (!tablaactiva.buscar(t.image) && !tablageneral.buscar(t.image))
+   					{
    						simbolo = new Symbol(t.image, t.beginLine, ENTERO);
    						tablageneral.insertarTS(t.image, simbolo);
-   				}
-   				//Esto hay que arreglarlo
-   				System.out.println("\t"+t.image+"="+expr._str);
-   				usarASIG(t.image,expr._str);
-   		}
+   					}
+   					//Esto hay que arreglarlo
+   					//System.out.println("\t"+t.image+"="+expr._str);
+   					usarASIG(t.image, expr._str);
+	   			}
+   		}	
 
 }
 
-Expresion Expresion() :
+Expresion Expresion(String variable) :
 {
   	Expresion expr=null;
   	Expresion expr2=null;
   	Expresion expr3=null;
+  	Expresion expr4=null;
 	BloqueCondicion blq=new BloqueCondicion();
 }
 {
- expr = ExpresionAND() ("?" expr2=Expresion() ":" expr3=Expresion()
+ expr = ExpresionAND() ("?" expr2=Expresion("") ":" expr3=Expresion("")
  	{
- 		usarOpInterrog(expr._str,expr2._str,expr3._str);
+ 		usarOpInterrog(expr._str,expr2._str,expr3._str, variable);
+ 		expr4=new Expresion("",ENTERO);
+ 		return expr4;
  	})?
     {
        return expr;
@@ -1006,7 +1016,7 @@ Expresion VectorExpression() :
 }
 {
 
-	expr = FunctionExpression() (t="[" (expr2=Expresion())? "]"
+	expr = FunctionExpression() (t="[" (expr2=Expresion(""))? "]"
 	{
 		String tmp=nuevaTmp();
 		if(expr2!=null)
@@ -1086,7 +1096,7 @@ Vector ArgumentList(Token nombre) : // lista de argumentos para una llamada a fu
   {
   		
   }
-  (expr1 = Expresion()
+  (expr1 = Expresion("")
   {
   		v=new Vector < Expresion >();
   		
@@ -1097,7 +1107,7 @@ Vector ArgumentList(Token nombre) : // lista de argumentos para una llamada a fu
   		{
   			throw new Error("Error en linea: "+nombre.beginLine+", Los parametros tienen que ser declarados antes de usarlos");
   		}
-  } ("," expr2 =  Expresion()
+  } ("," expr2 =  Expresion("")
   {
   		if(existeEnAlgunaTS(expr1._str))
   		{
@@ -1137,7 +1147,7 @@ Expresion PrimaryExpression() :
 }
 {
   (
-    "(" st = Expresion()")"
+    "(" st = Expresion("")")"
 
   |
    t = <IDENTIFICADOR> {st = new Expresion(t.image, t.kind);
@@ -1164,4 +1174,3 @@ Expresion PrimaryExpression() :
  {return st;}
   
 }
-///////////////
