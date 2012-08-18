@@ -42,7 +42,7 @@ public class GenCodFinal {
 			// Inicializamos la pila al maximo puesto que es decreciente
 			// y la guardamos en el puntero de pila
 			bw.write("MOVE #" + dirGlobal + ", .SP\n"); // ambito global
-			bw.write("MOVE .SP, .IX\n ; .IX Puntero de marco de pila\n");
+			bw.write("MOVE .SP, .IX ; .IX Puntero de marco de pila\n");
 			
 			 /* creamos el RA de la clase que contiene el metodo principal, dejando
 	         * hueco para todos sus atributos, despues guardamos el IX.
@@ -236,7 +236,7 @@ public class GenCodFinal {
 	private void EtiquetaIf () {
 		try {
 			bw.write(op1+": ;Etiqueta IFs\n");
-			bw.write("NOP\n");
+		//	bw.write("NOP\n");
 		} catch (Exception e) {
 			System.err.println("Error: Ejecutar Insertar Etiqua IF.");
 		}
@@ -348,7 +348,7 @@ public class GenCodFinal {
 				// Es op1 < op2?
 				bw.write("BP $3\n");	// TODO Solo si esta activo el bit P (Positivo)  => OJO!!! Tiene que saltar al MOVE .A ...
 				bw.write("MOVE #1, #-" + Despla3 + "[.IX]\n"); // Verdad
-				bw.write("BN $2\n");    // Saltas la siguiente instruccion
+				bw.write("BN $3\n");    // Saltas la siguiente instruccion
 				bw.write("MOVE #0,#-" + Despla3 + "[.IX]\n"); // Falso
 			} else if (!ambito_terceto.existeClave(op1) && ambito_terceto.existeClave(op2)) { 	//op1 No local
 				// Busco el operando 1.

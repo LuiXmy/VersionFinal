@@ -34,9 +34,16 @@ public class eg1
 
 	private static void usarLabel(String label){
 		System.out.println(label+":");
+		Tercetos ter = new Tercetos();
+ 	    tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.InsertarEtiqueta(label));
+        lista.add(tupla);
 	}
+	
 	private static void usarGoto(String label){
 		System.out.println("\tgoto "+ label);
+		Tercetos ter = new Tercetos();
+ 	    tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoIncondicional(label));
+        lista.add(tupla);		
 	}
 
 	private static String OpRelacional(String e1,String e2,String op){
@@ -56,12 +63,21 @@ public class eg1
 //		return blq;
 //	}
 
-	private static BloqueCondicion usarOpRelacional(BloqueCondicion blq, String op){
-		blq.etqVerdad = nuevaEtq();
+
+
+
+	private static void usarOpRelacional(BloqueCondicion blq, String op){
+//		blq.etqVerdad = nuevaEtq();
 		blq.etqFalso = nuevaEtq();// habria que meter un temporal intermedio para gestionar e1+op+e2
-		System.out.println("\tif "+ op +" goto "+ blq.etqVerdad);
+		System.out.println("\tif "+ op +" goto "+ blq.etqFalso);
+		Tercetos ter = new Tercetos();
+ 	    tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoCondicional(op,blq.etqFalso));
+        lista.add(tupla);
+		
+/*		System.out.println("\tif "+ op +" goto "+ blq.etqVerdad);
 		usarGoto(blq.etqFalso);
 		return blq;
+*/
 	}
 
 	private static void bloqueFuncion(Token t)
@@ -117,8 +133,8 @@ public class eg1
 
 	private static void usarASIG(String s, String e){
  	    System.out.println("\t"+s+"="+e);
- 	    Tercetos ter = new Tercetos(); 
-        tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion(s,e));
+ 	    Tercetos ter = new Tercetos();
+ 	    tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion(s,e));
         lista.add(tupla);
 	}
 
@@ -136,7 +152,7 @@ public class eg1
 
 	private static String usarOpAritmetico(String e1, String e2, String op){
 		String tmp = nuevaTmp();
-		Symbol simbolo = new Symbol(tmp, 1234, ENTERO, 1);  // Tamaño incrustado
+		Symbol simbolo = new Symbol(tmp, 1234, ENTERO,1);  // Tamaño incrustado
 		tablaactiva.insertarTS(tmp,simbolo);
 		System.out.println("\t"+tmp+"="+e1+op+e2);
 		Tercetos ter = new Tercetos();
@@ -144,6 +160,31 @@ public class eg1
 		lista.add(tupla);
 		return tmp;
 	}
+
+
+	private static String usarOpRel(String e1, String e2, String op){
+		String tmp = nuevaTmp();
+		Symbol simbolo = new Symbol(tmp, 1234, ENTERO,1);  // Tamaño incrustado
+		tablaactiva.insertarTS(tmp,simbolo);
+		System.out.println("\t"+tmp+"="+e1+op+e2);
+		Tercetos ter = new Tercetos();
+		tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.opRelacional(e1,e2,tmp));
+		lista.add(tupla);
+		return tmp;
+	}
+
+
+	private static String usarOpLogico(String e1, String e2, String op){
+		String tmp = nuevaTmp();
+		Symbol simbolo = new Symbol(tmp, 1234, ENTERO,1);  // Tamaño incrustado
+		tablaactiva.insertarTS(tmp,simbolo);
+		System.out.println("\t"+tmp+"="+e1+op+e2);
+		Tercetos ter = new Tercetos();
+		tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.opLogico(e1,e2,tmp));
+		lista.add(tupla);
+		return tmp;
+	}
+	
 
 	private static String operarVectorPrompt(String tmp, String nombreVector){
 		String tmp2 = nuevaTmp();
@@ -524,9 +565,11 @@ void IfStatement() :
 	BloqueCondicion blq = new BloqueCondicion();
 }
 {
+
   < IF > expr = Expresion("") {
 									usarOpRelacional(blq, expr._str);
-    								usarLabel(blq.etqVerdad);
+    								//usarLabel(blq.etqVerdad);
+
     						}  Sentencia() {
 									usarLabel(blq.etqFalso); 
 							}
@@ -857,12 +900,12 @@ void VariableDeclarator() :
    					{
    						simbolo = new Symbol(t.image, t.beginLine, ENTERO);
    						tablageneral.insertarTS(t.image, simbolo);
-   					}
-   					//Esto hay que arreglarlo
-   					//System.out.println("\t"+t.image+"="+expr._str);
-   					usarASIG(t.image, expr._str);
-	   			}
-   		}	
+   				}
+   				//Esto hay que arreglarlo
+   				System.out.println("\t"+t.image+"="+expr._str);
+   				usarASIG(t.image,expr._str);
+   				}
+   		}
 
 }
 
@@ -894,7 +937,7 @@ Expresion ExpresionAND() :
 }
 {
   expr1 = RelationalExpression() ( "&&" expr2 = RelationalExpression(){
-															expr1._str = usarOpAritmetico(expr1._str, expr2._str, "&&"); })*
+															expr1._str = usarOpLogico(expr1._str, expr2._str, "&&"); })*
     {
     	return expr1;
     }
@@ -913,7 +956,7 @@ Expresion RelationalExpression() :
   expr1 = AdditiveExpression()
   	(< MENOR > expr2 = AdditiveExpression()
   	{
-  		expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<"); })*
+  		expr1._str = usarOpRel(expr1._str, expr2._str, "<"); })*
     {
       return expr1;
     }

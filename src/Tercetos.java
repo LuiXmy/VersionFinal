@@ -147,8 +147,12 @@ public class Tercetos{
      
     return "READ,"+op1+",,\n";}
     
-    public String not(String op1, String temporal){
-        return "NOT,"+op1+"," + temporal +",\n";    
+    public String opRelacional(String op1, String op2, String temporal){
+        return "MENOR,"+op1+","+op2+"," + temporal +"\n";    
+    }
+    
+    public String opLogico(String op1, String op2, String temporal){
+        return "AND,"+op1+","+op2+"," + temporal +"\n";    
     }
         
     public String devValor(String op1){
