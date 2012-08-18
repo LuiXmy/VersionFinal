@@ -84,8 +84,14 @@ public class TablaSimbolos{
 	
 	//Necesito actualizar el tamaño cada vez que inserto algo
 	public void actualizarTamano(Symbol simbolo){
-		simbolo.desplazamiento += 1; 
-		desplazamiento += simbolo.desplazamiento;
+		if (simbolo.tipo == 100){
+			simbolo.desplazamiento = desplazamiento;
+			desplazamiento += simbolo.numeroelementos; 
+		} else {
+			simbolo.desplazamiento = desplazamiento;
+			desplazamiento += 1; 
+		}
+		
 	}
 	
 	

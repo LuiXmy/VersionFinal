@@ -37,8 +37,7 @@ class Symbol {//Esto se guardará en el campo Value de la tabla de momento tira c
     	this.key = key;
     	this.numerolinea = linea;
     	this.tipo = tipo;
-    	this.desplazamiento+= tamano;
-    }
+     }
     
     public Symbol(String key, int numerolinea, int tipo, int tamano, int numeroelementos) {
 		super();
@@ -46,7 +45,6 @@ class Symbol {//Esto se guardará en el campo Value de la tabla de momento tira c
 		this.numerolinea = numerolinea;
 		this.tipo = tipo;
 		this.numeroelementos = numeroelementos;
-    	this.desplazamiento+= tamano;
 	}
 
 	public Symbol(String key, int tipo, int numArgumentos, Vector<Symbol> v, int tamano, String tiporetorno) {//Constructor para funciones
@@ -54,7 +52,6 @@ class Symbol {//Esto se guardará en el campo Value de la tabla de momento tira c
     	this.key = key;
     	this.tipo = tipo;
     	this.numArgumentos = numArgumentos;
-    	this.desplazamiento+= tamano; //¿?
     	vArgumentos = v;
     	this.tiporetorno=tiporetorno;
     }
@@ -81,7 +78,7 @@ class Symbol {//Esto se guardará en el campo Value de la tabla de momento tira c
 				+ ", tipo=" + tipo + ", desplazamiento=" + desplazamiento
 				+ ", numeroelementos=" + numeroelementos + ", numArgumentos="
 				+ numArgumentos + ", vArgumentos=" + vArgumentos
-				+ ", tiporetorno=" + tiporetorno + "]";
+				+ ", tiporetorno=" + tiporetorno + "]\n";
 	}
  
 }
