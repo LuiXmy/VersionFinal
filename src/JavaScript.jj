@@ -14,7 +14,7 @@ PARSER_BEGIN(eg1)
 import java.util.Vector;
 import java.util.HashMap;
 import java.util.LinkedList;
-
+// jall
 public class eg1
 {
 	final static int ID = 24;
