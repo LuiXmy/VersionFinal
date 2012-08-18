@@ -7,11 +7,6 @@ asdf
 asd
 fasdf
 
-
-me cago en tooooooooooooooo
-luismi mamon
-julapaaaaaaaaaaaa
-
 //if (2+3<(1+2)&&1+(8+7)<33+2) if(2<3) feo=2
 
 //do{a=2+3
