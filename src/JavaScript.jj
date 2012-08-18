@@ -1,6 +1,8 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
  */
+
+ //Modificaciobes
 options
 {
   JDK_VERSION = "1.5";

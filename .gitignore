@@ -30,6 +30,7 @@ local.properties
 
 #Fichero del SRC
 .src/eg1*
+.src/eg1Tok*
 .src/ej*
 .src/ens*
 .src/fuente*
