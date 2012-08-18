@@ -2,20 +2,12 @@ ORG 0
 MOVE #65432, .SP
 MOVE .SP, .IX
  ; .IX Puntero de marco de pila
-ADD #-9, .SP
+ADD #-5, .SP
 MOVE .A, .SP
 MOVE #2,#-0[.IX]
-MOVE #7,#-1[.IX]
-ADD #-0[.IX], #-1[.IX]
-MOVE .A, #-2[.IX]
-MOVE #8,#-3[.IX]
-SUB #-2[.IX], #-3[.IX]
-MOVE .A, #-4[.IX]
-MOVE #9,#-5[.IX]
-SUB #-4[.IX], #-5[.IX]
-MOVE .A, #-6[.IX]
-MOVE #-6[.IX], #-7[.IX]; Moviendo bloque
-MOVE #-7[.IX], #-8[.IX]; Moviendo bloque
+MOVE #4,#-1[.IX]
+MOVE #2,#-3[.IX]
+MOVE #3,#-4[.IX]
 HALT ; Se terminara la ejecucion
 ORG 11800
 cad_cierto: DATA "true"

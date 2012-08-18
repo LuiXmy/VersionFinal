@@ -67,15 +67,18 @@ public class eg1 implements eg1Constants {
                 System.out.println("\u005ctcall "+ nombre + ", "+elementos.size());
         }
 
-        public static void usarOpInterrog(String op, String expr1, String expr2){
+        public static void usarOpInterrog(String op, String expr1, String expr2, String nombre){
                 String etiqueta1=nuevaEtq();
                 String etiqueta2=nuevaEtq();
+                String etiqueta3=nuevaEtq();
                 System.out.println("\u005ctif "+ op +" goto "+ etiqueta1);
+                System.out.println("\u005ctelse goto "+ etiqueta2);
                 usarLabel(etiqueta1);
-                System.out.println("\u005cta"+"="+expr1);
-                System.out.println("\u005ctgoto "+ etiqueta2);
-                System.out.println("\u005cta"+"="+expr2);
+                System.out.println("\u005ct"+nombre+"="+expr1);
+                System.out.println("\u005ctgoto "+ etiqueta3);
                 usarLabel(etiqueta2);
+                System.out.println("\u005ct"+nombre+"="+expr2);
+                usarLabel(etiqueta3);
         }
 
         private static void condicionDo(String etiq, String op){
@@ -102,7 +105,7 @@ public class eg1 implements eg1Constants {
         private static void usarASIG(String s, String e){
             System.out.println("\u005ct"+s+"="+e);
             Tercetos ter = new Tercetos();
-            tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion(s,e));
+        tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion(s,e));
         lista.add(tupla);
         }
 
@@ -316,10 +319,10 @@ public class eg1 implements eg1Constants {
         Symbol simbolo=null;
     id = jj_consume_token(IDENTIFICADOR);
     jj_consume_token(CORCHETEDRCHA);
-    exp = Expresion();
+    exp = Expresion(id.image);
     jj_consume_token(CORCHETEIZQ);
     jj_consume_token(ASIGNACION);
-    exp1 = Expresion();
+    exp1 = Expresion("");
                 simbolo=tablaactiva.obtenerSimbolo(id.image);
                 if (simbolo==null)
                 {
@@ -417,7 +420,7 @@ public class eg1 implements eg1Constants {
         String etqFinIf = "";
         BloqueCondicion blq = new BloqueCondicion();
     jj_consume_token(IF);
-    expr = Expresion();
+    expr = Expresion("");
                                                                         usarOpRelacional(blq, expr._str);
                                                                 usarLabel(blq.etqVerdad);
     Sentencia();
@@ -452,7 +455,7 @@ public class eg1 implements eg1Constants {
     }
     jj_consume_token(LLAVEIZQ);
     jj_consume_token(WHILE);
-    expr = Expresion();
+    expr = Expresion("");
                 condicionDo(etq,expr._str);
   }
 
@@ -460,7 +463,7 @@ public class eg1 implements eg1Constants {
                 Expresion exp=null;
     jj_consume_token(RETURN);
     if (jj_2_4(2)) {
-      exp = Expresion();
+      exp = Expresion("");
                 System.out.println(exp);
     } else {
       ;
@@ -592,7 +595,7 @@ public class eg1 implements eg1Constants {
     jj_consume_token(PUNTO);
     jj_consume_token(WRITE);
     jj_consume_token(PARENDRCHA);
-    expr = Expresion();
+    expr = Expresion("");
     jj_consume_token(PARENIZQ);
                 System.out.println("\u005ctimprime "+ expr._str);
   }
@@ -771,8 +774,8 @@ public class eg1 implements eg1Constants {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case ASIGNACION:
           jj_consume_token(ASIGNACION);
-          expr = Expresion();
-                System.out.println("\u005ct"+t.image+"="+expr._str);
+          expr = Expresion(t.image);
+                        usarASIG(t.image, expr._str);
           break;
         default:
           jj_la1[12] = jj_gen;
@@ -782,15 +785,19 @@ public class eg1 implements eg1Constants {
       case IDENTIFICADOR:
         t = jj_consume_token(IDENTIFICADOR);
         jj_consume_token(ASIGNACION);
-        expr = Expresion();
-                                if (!tablaactiva.buscar(t.image) && !tablageneral.buscar(t.image))
+        expr = Expresion(t.image);
+                                if(expr._str!="")
                                 {
+
+                                        if (!tablaactiva.buscar(t.image) && !tablageneral.buscar(t.image))
+                                        {
                                                 simbolo = new Symbol(t.image, t.beginLine, ENTERO);
                                                 tablageneral.insertarTS(t.image, simbolo);
+                                        }
+                                        //Esto hay que arreglarlo
+                                        //System.out.println("\t"+t.image+"="+expr._str);
+                                        usarASIG(t.image, expr._str);
                                 }
-                                //Esto hay que arreglarlo
-                                System.out.println("\u005ct"+t.image+"="+expr._str);
-                                usarASIG(t.image,expr._str);
         break;
       default:
         jj_la1[13] = jj_gen;
@@ -800,19 +807,22 @@ public class eg1 implements eg1Constants {
     }
   }
 
-  static final public Expresion Expresion() throws ParseException {
+  static final public Expresion Expresion(String variable) throws ParseException {
         Expresion expr=null;
         Expresion expr2=null;
         Expresion expr3=null;
+        Expresion expr4=null;
         BloqueCondicion blq=new BloqueCondicion();
     expr = ExpresionAND();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case INTERROGANTE:
       jj_consume_token(INTERROGANTE);
-      expr2 = Expresion();
+      expr2 = Expresion("");
       jj_consume_token(DOSPUNTOS);
-      expr3 = Expresion();
-                usarOpInterrog(expr._str,expr2._str,expr3._str);
+      expr3 = Expresion("");
+                usarOpInterrog(expr._str,expr2._str,expr3._str, variable);
+                expr4=new Expresion("",ENTERO);
+                {if (true) return expr4;}
       break;
     default:
       jj_la1[14] = jj_gen;
@@ -995,7 +1005,7 @@ public class eg1 implements eg1Constants {
       case INTEGER_LITERAL:
       case STRING_LITERAL:
       case PARENDRCHA:
-        expr2 = Expresion();
+        expr2 = Expresion("");
         break;
       default:
         jj_la1[20] = jj_gen;
@@ -1074,7 +1084,7 @@ public class eg1 implements eg1Constants {
     case INTEGER_LITERAL:
     case STRING_LITERAL:
     case PARENDRCHA:
-      expr1 = Expresion();
+      expr1 = Expresion("");
                 v=new Vector < Expresion >();
 
                 if (existeEnAlgunaTS(expr1._str))
@@ -1095,7 +1105,7 @@ public class eg1 implements eg1Constants {
           break label_9;
         }
         jj_consume_token(COMA);
-        expr2 = Expresion();
+        expr2 = Expresion("");
                 if(existeEnAlgunaTS(expr1._str))
                 {
                         v.add(expr2);
@@ -1134,7 +1144,7 @@ public class eg1 implements eg1Constants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case PARENDRCHA:
       jj_consume_token(PARENDRCHA);
-      st = Expresion();
+      st = Expresion("");
       jj_consume_token(PARENIZQ);
       break;
     case IDENTIFICADOR:
@@ -1204,60 +1214,6 @@ public class eg1 implements eg1Constants {
     finally { jj_save(4, xla); }
   }
 
-  static private boolean jj_3R_12() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_scan_token(CORCHETEDRCHA)) return true;
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_14() {
-    if (jj_scan_token(VAR)) return true;
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_17() {
-    if (jj_3R_19()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_20()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_21() {
-    if (jj_3R_23()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_24()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_30() {
-    if (jj_3R_16()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_3() {
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_11() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_3R_16()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_23() {
     if (jj_3R_25()) return true;
     Token xsp;
@@ -1265,6 +1221,11 @@ public class eg1 implements eg1Constants {
       xsp = jj_scanpos;
       if (jj_3R_26()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  static private boolean jj_3_3() {
+    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -1278,6 +1239,17 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
+  static private boolean jj_3_2() {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    if (jj_3R_16()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_20() {
     if (jj_scan_token(AND)) return true;
     return false;
@@ -1285,6 +1257,39 @@ public class eg1 implements eg1Constants {
 
   static private boolean jj_3R_34() {
     if (jj_scan_token(STRING_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_33() {
+    if (jj_scan_token(INTEGER_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_3R_17()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_18()) jj_scanpos = xsp;
+    return false;
+  }
+
+  static private boolean jj_3R_27() {
+    if (jj_scan_token(MAS)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_24() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_27()) {
+    jj_scanpos = xsp;
+    if (jj_3R_28()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_22() {
+    if (jj_scan_token(MENOR)) return true;
     return false;
   }
 
@@ -1309,52 +1314,8 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3R_13() {
-    if (jj_3R_17()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_18()) jj_scanpos = xsp;
-    return false;
-  }
-
-  static private boolean jj_3R_33() {
-    if (jj_scan_token(INTEGER_LITERAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_27() {
-    if (jj_scan_token(MAS)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_24() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_27()) {
-    jj_scanpos = xsp;
-    if (jj_3R_28()) return true;
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_22() {
-    if (jj_scan_token(MENOR)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_32() {
     if (jj_scan_token(IDENTIFICADOR)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_15() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_scan_token(ASIGNACION)) return true;
     return false;
   }
 
@@ -1385,6 +1346,11 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
+  static private boolean jj_3_1() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_19() {
     if (jj_3R_21()) return true;
     Token xsp;
@@ -1395,8 +1361,9 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3_4() {
-    if (jj_3R_13()) return true;
+  static private boolean jj_3R_15() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    if (jj_scan_token(ASIGNACION)) return true;
     return false;
   }
 
@@ -1410,8 +1377,51 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
+  static private boolean jj_3_4() {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_18() {
     if (jj_scan_token(INTERROGANTE)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
+    if (jj_3R_19()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_20()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_21() {
+    if (jj_3R_23()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_24()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_30() {
+    if (jj_3R_16()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_12() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    if (jj_scan_token(CORCHETEDRCHA)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14() {
+    if (jj_scan_token(VAR)) return true;
+    if (jj_scan_token(IDENTIFICADOR)) return true;
     return false;
   }
 
