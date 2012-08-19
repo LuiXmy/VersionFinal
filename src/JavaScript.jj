@@ -898,10 +898,12 @@ void VariableDeclarator() :
   |
 		t = < IDENTIFICADOR >
 					{// no estabamos metiendo este identificador en la TS
-     					simbolo=new Symbol(t.image, t.beginLine, ENTERO);
-     					tablaactiva.insertarTS(t.image, simbolo);
+					// creo que habria que mirar primero si está en la tabla, si no no se inserta, seguramente haya que com
+						if(!existeEnAlgunaTS(t.image))						{
+						  	simbolo=new Symbol(t.image, t.beginLine, ENTERO);
+     						tablaactiva.insertarTS(t.image, simbolo);
+     					}
      				}
-
 
 			< ASIGNACION > expr = Expresion(t.image)
    		{
