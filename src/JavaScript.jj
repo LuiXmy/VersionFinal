@@ -206,6 +206,10 @@ public class eg1
 		{
 			System.out.println("\t"+tmp.key+"["+i+"]"+" = "+ tmp2.key+"["+i+"] ");	
 		}
+		//Final
+		Tercetos ter = new Tercetos();
+		tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion(tmp.key,tmp2.key));
+		lista.add(tupla);
 	}
 
 	private static void asignacionVector(String id, int tamano, String exp, String exp1)
@@ -214,7 +218,12 @@ public class eg1
 		System.out.println("\tif "+exp+" > " +tamano);
 		System.out.println("\tgoto "+etiq);
 		System.out.println("\t"+id+"["+exp+"]"+" = "+exp1);
-		usarLabel(etiq);
+
+		//Final
+		Tercetos ter = new Tercetos();
+		tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.meteEnArray(id,exp1,exp));
+		lista.add(tupla);
+		//usarLabel(etiq);
 	}
 
 
@@ -491,6 +500,7 @@ void VectorStatement() :
 		if ((tablaactiva.existeClave(id.image) && tablaactiva.tipo(id.image)==VECTOR) ||
 		(tablageneral.existeClave(id.image) && tablageneral.tipo(id.image)==VECTOR))
 		{
+		  	// Comprobar si indice > tamaño de vector.
 			asignacionVector(simbolo.key, simbolo.numeroelementos, exp._str, exp1._str);
 		}else
 			throw new Error("El Vector en linea "+id.beginLine+" no existe");
@@ -1082,6 +1092,12 @@ Expresion VectorExpression() :
 			simbolo=new Symbol(tmp, t.beginLine, ENTERO);
 			tablaactiva.insertarTS(tmp,simbolo);
 			Expresion resultado = new Expresion(tmp, ENTERO);
+
+			//Final
+			Tercetos ter = new Tercetos();
+			tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.sacaDeArray(expr._str,tmp,expr2._str));
+			lista.add(tupla);
+
 			return  resultado;
 		}
 		
@@ -1214,7 +1230,7 @@ Expresion PrimaryExpression() :
  //  t = <INTEGER_LITERAL> {st = new Expresion(usarOpAritmetico(token.image, "", ""), t.kind); }
    t = <INTEGER_LITERAL> {st = new Expresion(usarOpUnario(token.image), t.kind);
 
-							if(Integer.parseInt(token.image) > 32767);// al no usar operador unario no comprobamos limite inferior || Integer.parseInt(token.image) < -32768)
+							if(Integer.parseInt(token.image) > 32767)// al no usar operador unario no comprobamos limite inferior || Integer.parseInt(token.image) < -32768)
 								throw new Error ("El numero esta fuera del rango de la maquina [-32768..32767]");
    						  }
 

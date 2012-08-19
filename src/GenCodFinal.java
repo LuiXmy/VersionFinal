@@ -115,7 +115,7 @@ public class GenCodFinal {
 			EjecutarAsigna(ambitoterceto);
 		} else if (operacion.equals("METE_EN_ARRAY")) {		// Asignar valor en posicion del vector
 			AsignaValorVector(ambitoterceto);				// pe: v[2]=23
-		} else if (operacion.equals("SACA_DE_ARRAY")){
+		} else if (operacion.equals("SACA_DE_ARRAY")){		// pe: x = v[4]
 			// TODO revisar-hacer
 			ObtenerValorVector(ambitoterceto);
 		} else if (operacion.equals("IF")) 	{		// If
