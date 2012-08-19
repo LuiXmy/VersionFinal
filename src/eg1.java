@@ -1246,8 +1246,12 @@ public class eg1 implements eg1Constants {
          t = jj_consume_token(INTEGER_LITERAL);
                           st = new Expresion(usarOpUnario(token.image), t.kind);
 
-                                                        if(Integer.parseInt(token.image) > 32767);// al no usar operador unario no comprobamos limite inferior || Integer.parseInt(token.image) < -32768)
-                                                                {if (true) throw new Error ("El numero esta fuera del rango de la maquina [-32768..32767]");}
+                if(Integer.parseInt(token.image) > 32767)
+                {
+                                // al no usar operador unario no comprobamos limite inferior || Integer.parseInt(token.image) < -32768)
+                        {if (true) throw new Error ("El numero esta fuera del rango de la maquina [-32768..32767]");}
+                }
+                {if (true) return st;}
       break;
     case STRING_LITERAL:
       t = jj_consume_token(STRING_LITERAL);
@@ -1311,16 +1315,16 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
+  static private boolean jj_3R_34() {
+    if (jj_scan_token(STRING_LITERAL)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_13() {
     if (jj_3R_17()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_18()) jj_scanpos = xsp;
-    return false;
-  }
-
-  static private boolean jj_3R_34() {
-    if (jj_scan_token(STRING_LITERAL)) return true;
     return false;
   }
 

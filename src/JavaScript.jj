@@ -1254,7 +1254,8 @@ Expresion PrimaryExpression() :
 		if(Integer.parseInt(token.image) > 32767)		{				// al no usar operador unario no comprobamos limite inferior || Integer.parseInt(token.image) < -32768)
 			throw new Error ("El numero esta fuera del rango de la maquina [-32768..32767]");
    		}
-
+   		return st;
+	}
   |
    t = <STRING_LITERAL> {
 		String cadena = t.image.substring(1, t.image.length()-1);
