@@ -1212,7 +1212,11 @@ Expresion PrimaryExpression() :
 
   |
  //  t = <INTEGER_LITERAL> {st = new Expresion(usarOpAritmetico(token.image, "", ""), t.kind); }
-   t = <INTEGER_LITERAL> {st = new Expresion(usarOpUnario(token.image), t.kind); }
+   t = <INTEGER_LITERAL> {st = new Expresion(usarOpUnario(token.image), t.kind);
+
+							if(Integer.parseInt(token.image) > 32767);// al no usar operador unario no comprobamos limite inferior || Integer.parseInt(token.image) < -32768)
+								throw new Error ("El numero esta fuera del rango de la maquina [-32768..32767]");
+   						  }
 
   |
    t = <STRING_LITERAL> {
