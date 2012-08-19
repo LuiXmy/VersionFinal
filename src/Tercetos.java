@@ -167,4 +167,8 @@ public class Tercetos{
         return "TEMP," + temporal + ","+ valor + ",\n";
     }
     
+    public String halt (){
+        return "HALT,,,\n";
+    }
+    
 } 

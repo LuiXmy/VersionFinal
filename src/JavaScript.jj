@@ -143,6 +143,13 @@ public class eg1
         lista.add(tupla);
 	}
 
+	private static void usarASIGINT(String s, int e){
+ 	    System.out.println("\t"+s+"="+e);
+ 	    Tercetos ter = new Tercetos();
+ 	    tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion_valor(s,e));
+        lista.add(tupla);
+	}
+
 	private static String usarOpUnario(String e1){
 		String tmp = nuevaTmp();
 		Symbol simbolo = new Symbol(tmp, 1234, ENTERO, 1);  // Tamaño incrustado
@@ -881,6 +888,7 @@ void VariableDeclarator() :
      LOOKAHEAD(4) < VAR > t=< IDENTIFICADOR > < ASIGNACION >  < NEW > < ARRAY > "(" elementos=< INTEGER_LITERAL > ")"
      {
      		num=Integer.parseInt(elementos.image);
+     
 //			}catch (java.lang.NumberFormatException exc){
 //				throw new Error("El Indice del Vector declarado en la linea "+t.beginLine+" tiene que ser un entero");
 //			}
@@ -1161,21 +1169,39 @@ Expresion VectorExpression() :
 	expr = FunctionExpression() (t="[" (expr2=Expresion(""))? "]"
 	{
 		String tmp=nuevaTmp();
+		String tmp2="";
+		String tmp3="";
+				
 		if(expr2!=null)
 		{
 			System.out.println("\t"+tmp+" = "+expr._str+ "[ "+expr2._str+" ]");
 			simbolo=new Symbol(tmp, t.beginLine, ENTERO);
 			tablaactiva.insertarTS(tmp,simbolo);
 			Expresion resultado = new Expresion(tmp, ENTERO);
-
+			Symbol simbolo2=tablaactiva.obtenerSimbolo(expr._str);
+			tmp2 = nuevaTmp();
+			Symbol simbolo3 = new Symbol(tmp2, t.beginLine, ENTERO);
+			usarASIGINT(tmp2,simbolo2.numeroelementos-1);
+			tablaactiva.insertarTS(tmp2,simbolo3);
 			//Final
+			// Comprueba indice del vector
+			String etiqueta1=nuevaEtq();// etqFalso
+			
+			tmp3 = usarOpRel(tmp2,expr2._str,"<");
+			System.out.println("\tif "+ tmp3 +" goto "+ etiqueta1); // si no se cumple salto a etqFalso
 			Tercetos ter = new Tercetos();
-			tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.sacaDeArray(expr._str,tmp,expr2._str));
+ 	   		tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoCondicional(tmp3,etiqueta1));
 			lista.add(tupla);
-
-			return  resultado;
+			ter = new Tercetos();
+			tupla = new tupla_Tercetos(tablaactiva,ter.halt());
+			lista.add(tupla);
+			usarLabel(etiqueta1);
+			ter = new Tercetos();
+ 	   		tupla = new tupla_Tercetos(tablaactiva,ter.sacaDeArray(expr._str,tmp,expr2._str));
+			lista.add(tupla);
 		}
-		
+		Expresion expr4=new Expresion(tmp,ENTERO);
+		return expr4;
 	}
 	)*
 	{

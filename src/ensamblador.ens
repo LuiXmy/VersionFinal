@@ -1,13 +1,23 @@
 ORG 0
 MOVE #65432, .SP
-MOVE .SP, .IX
- ; .IX Puntero de marco de pila
-ADD #-5, .SP
+MOVE .SP, .IX ; .IX Puntero de marco de pila
+ADD #-8, .SP
 MOVE .A, .SP
-MOVE #2,#-0[.IX]
-MOVE #4,#-1[.IX]
-MOVE #2,#-3[.IX]
 MOVE #3,#-4[.IX]
+MOVE #2,#-6[.IX]
+CMP #-6[.IX], #-4[.IX]
+BP $3
+MOVE #1, #-7[.IX]
+BN $3
+MOVE #0,#-7[.IX]
+CMP #-7[.IX], /v_cierto 
+BNZ /etq1
+HALT ; Se terminara la ejecucion
+etq1: NOP;Etiqueta IFs
+ADD #-4[.IX], #0
+SUB .IX, .A
+MOVE [.A], #-5[.IX]
+MOVE #-5[.IX], #-3[.IX]; Moviendo bloque
 HALT ; Se terminara la ejecucion
 ORG 11800
 cad_cierto: DATA "true"

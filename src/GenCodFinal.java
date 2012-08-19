@@ -166,6 +166,13 @@ public class GenCodFinal {
 		} else if (operacion.equals("PUT_ENTERO")) {	// PRINT ENTERO COUT
 			nemonico="WRINT";
 			PutEntero(ambitoterceto);
+		} else if (operacion.equals("HALT")) {	 	// STOP
+			try {
+				bw.write("HALT ; Se terminara la ejecucion\n");;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (operacion.equals("PUT_SALTO_LINEA")) {// PRINT SALTO_LINEA
 			// No es una instruccion al uso. Solo en cada cout se emite esto
 			try { bw.write("WRSTR /salto_lin\n"); }	// etiqueta ya guardada! 
@@ -330,7 +337,9 @@ public class GenCodFinal {
 	private void OpRelacional (TablaSimbolos ambito_terceto) {
 		try {
 			int Despla1=0, Despla2=0, Despla3=0;
-
+			System.out.println("Primer operador: "+ op1);
+			System.out.println("Segundo operador: "+ op2);
+			System.out.println("Resultado: "+ op3);
 			// Nemonico en todos los casos: CMP Mirar SR el bit S Signo
 			if (ambito_terceto.existeClave(op1) && ambito_terceto.existeClave(op2)) {			// todo local!
 				// operando1
@@ -1071,6 +1080,7 @@ public class GenCodFinal {
 
 	    op3=linea.substring(0,linea.indexOf("\n"));
 	}
+	
 	
 	
 	/*

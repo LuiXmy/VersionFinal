@@ -1,2 +1,2 @@
-a=((2+7)-8)-9
-b=a
+var a = new Array(3)
+z = a[3]
