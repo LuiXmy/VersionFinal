@@ -1,10 +1,13 @@
 ORG 0
 MOVE #65432, .SP
 MOVE .SP, .IX ; .IX Puntero de marco de pila
-ADD #-3, .SP
+ADD #-5, .SP
 MOVE .A, .SP
 feo: NOP;Etiqueta IFs
 MOVE #2,#-4[.IX]
+MOVE #-4[.IX], #-3[.IX]; Moviendo bloque
+AND #-0[.IX], #-2[.IX]
+MOVE .A, #-4[.IX]
 MOVE #-4[.IX], #-3[.IX]; Moviendo bloque
 HALT ; Se terminara la ejecucion
 ORG 11800

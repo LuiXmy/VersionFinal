@@ -887,6 +887,10 @@ public class eg1 implements eg1Constants {
   }
 
   static final public Expresion ExpresionAND() throws ParseException {
+        boolean expr1TablaActiva = false;
+        boolean expr2TablaActiva = false;
+        boolean expr1TablaGeneral = false;
+        boolean expr2TablaGeneral = false;
         Expresion expr1 = null;
         Expresion expr2 = null;
     expr1 = RelationalExpression();
@@ -902,7 +906,40 @@ public class eg1 implements eg1Constants {
       }
       jj_consume_token(AND);
       expr2 = RelationalExpression();
-                                                                                                                        expr1._str = usarOpLogico(expr1._str, expr2._str, "&&");
+                {
+                if(tablaactiva.tipo(expr1._str)!=-1)
+                        expr1TablaActiva = true;
+                else if(tablageneral.tipo(expr1._str)!=-1)
+                        expr1TablaGeneral = true;
+                if(tablaactiva.tipo(expr2._str)!=-1)
+                        expr2TablaActiva = true;
+                else if(tablageneral.tipo(expr2._str)!=-1)
+                        expr2TablaGeneral = true;
+
+                if(expr1._tipo==ENTERO && expr2._tipo==ENTERO)
+                {
+                        expr1._str = usarOpLogico(expr1._str, expr2._str, "&&");
+                }else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
+                         (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
+                {
+                        expr1._str = usarOpLogico(expr1._str, expr2._str, "&&");
+                }else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
+                         (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
+                {
+                        expr1._str = usarOpLogico(expr1._str, expr2._str, "&&");
+                }else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
+                         (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
+                {
+                        expr1._str = usarOpLogico(expr1._str, expr2._str, "&&");
+                }else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
+                         (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
+                {
+                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "&&");
+                }else
+                {
+                        {if (true) throw new Error("El tipo de las expresiones no es correcto");}
+                }
+                }
     }
         {if (true) return expr1;}
     throw new Error("Missing return statement in function");
@@ -942,23 +979,23 @@ public class eg1 implements eg1Constants {
 
                 if(expr1._tipo==ENTERO && expr2._tipo==ENTERO)
                 {
-                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
+                        expr1._str = usarOpRel(expr1._str, expr2._str, "<");
                 }else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
                          (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
                 {
-                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
+                        expr1._str = usarOpRel(expr1._str, expr2._str, "<");
                 }else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
                          (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
                 {
-                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
+                        expr1._str = usarOpRel(expr1._str, expr2._str, "<");
                 }else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
                          (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
                 {
-                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
+                        expr1._str = usarOpRel(expr1._str, expr2._str, "<");
                 }else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
                          (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
                 {
-                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
+                        expr1._str = usarOpRel(expr1._str, expr2._str, "<");
                 }else
                 {
                         {if (true) throw new Error("El tipo de las expresiones no es correcto");}
@@ -1310,21 +1347,52 @@ public class eg1 implements eg1Constants {
     finally { jj_save(4, xla); }
   }
 
-  static private boolean jj_3R_22() {
-    if (jj_scan_token(MENOR)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_34() {
-    if (jj_scan_token(STRING_LITERAL)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_13() {
     if (jj_3R_17()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_18()) jj_scanpos = xsp;
+    return false;
+  }
+
+  static private boolean jj_3R_21() {
+    if (jj_3R_23()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_24()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_30() {
+    if (jj_3R_16()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_3() {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_22() {
+    if (jj_scan_token(MENOR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    if (jj_3R_16()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_34() {
+    if (jj_scan_token(STRING_LITERAL)) return true;
     return false;
   }
 
@@ -1345,52 +1413,6 @@ public class eg1 implements eg1Constants {
 
   static private boolean jj_3R_16() {
     if (jj_scan_token(PARENDRCHA)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_3() {
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_11() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_3R_16()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_19() {
-    if (jj_3R_21()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_22()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_33() {
-    if (jj_scan_token(INTEGER_LITERAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_27() {
-    if (jj_scan_token(MAS)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_24() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_27()) {
-    jj_scanpos = xsp;
-    if (jj_3R_28()) return true;
-    }
     return false;
   }
 
@@ -1415,8 +1437,64 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
+  static private boolean jj_3R_19() {
+    if (jj_3R_21()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_22()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
+    if (jj_3R_19()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_20()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_33() {
+    if (jj_scan_token(INTEGER_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_27() {
+    if (jj_scan_token(MAS)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_24() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_27()) {
+    jj_scanpos = xsp;
+    if (jj_3R_28()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_15() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    if (jj_scan_token(ASIGNACION)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_32() {
     if (jj_scan_token(IDENTIFICADOR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_18() {
+    if (jj_scan_token(INTERROGANTE)) return true;
     return false;
   }
 
@@ -1442,14 +1520,13 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3R_26() {
-    if (jj_scan_token(CORCHETEDRCHA)) return true;
+  static private boolean jj_3_4() {
+    if (jj_3R_13()) return true;
     return false;
   }
 
-  static private boolean jj_3R_15() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_scan_token(ASIGNACION)) return true;
+  static private boolean jj_3R_26() {
+    if (jj_scan_token(CORCHETEDRCHA)) return true;
     return false;
   }
 
@@ -1460,46 +1537,6 @@ public class eg1 implements eg1Constants {
       xsp = jj_scanpos;
       if (jj_3R_30()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  static private boolean jj_3_1() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_18() {
-    if (jj_scan_token(INTERROGANTE)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_17() {
-    if (jj_3R_19()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_20()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3_4() {
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_21() {
-    if (jj_3R_23()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_24()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_30() {
-    if (jj_3R_16()) return true;
     return false;
   }
 
