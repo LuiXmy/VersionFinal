@@ -956,12 +956,51 @@ Expresion Expresion(String variable) :
 
 Expresion ExpresionAND() :
 {
+	boolean expr1TablaActiva = false;
+	boolean expr2TablaActiva = false;
+	boolean expr1TablaGeneral = false;
+	boolean expr2TablaGeneral = false;
   	Expresion expr1 = null;
   	Expresion expr2 = null;
 }
 {
-  expr1 = RelationalExpression() ( "&&" expr2 = RelationalExpression(){
-															expr1._str = usarOpLogico(expr1._str, expr2._str, "&&"); })*
+  	expr1 = RelationalExpression() ( "&&" expr2 = RelationalExpression()
+  	{
+		{
+		if(tablaactiva.tipo(expr1._str)!=-1)
+			expr1TablaActiva = true;
+		else if(tablageneral.tipo(expr1._str)!=-1)
+			expr1TablaGeneral = true;
+		if(tablaactiva.tipo(expr2._str)!=-1)
+			expr2TablaActiva = true;
+		else if(tablageneral.tipo(expr2._str)!=-1)
+			expr2TablaGeneral = true;
+	
+		if(expr1._tipo==ENTERO && expr2._tipo==ENTERO)
+		{
+			expr1._str = usarOpLogico(expr1._str, expr2._str, "&&");
+		}else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
+		         (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
+		{
+			expr1._str = usarOpLogico(expr1._str, expr2._str, "&&");
+		}else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
+		         (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
+		{
+			expr1._str = usarOpLogico(expr1._str, expr2._str, "&&");
+		}else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
+		         (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
+		{
+			expr1._str = usarOpLogico(expr1._str, expr2._str, "&&");
+		}else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
+		         (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
+		{
+			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "&&");
+		}else
+		{
+			throw new Error("El tipo de las expresiones no es correcto");
+		}
+		}
+	})*
     {
     	return expr1;
     }
@@ -969,6 +1008,10 @@ Expresion ExpresionAND() :
 
 Expresion RelationalExpression() :
 {
+	boolean expr1TablaActiva = false;
+	boolean expr2TablaActiva = false;
+	boolean expr1TablaGeneral = false;
+	boolean expr2TablaGeneral = false;
   	Expresion expr1 = null;
   	Expresion expr2 = null;
   	Expresion exprCond = null;
@@ -979,8 +1022,40 @@ Expresion RelationalExpression() :
   //revisar, en la version de luis hay JSRelacional(t, expr1, expr2);  pero expr1 no se le ha asignado ningún valor
   expr1 = AdditiveExpression()
   	(< MENOR > expr2 = AdditiveExpression()
-  	{
-  		expr1._str = usarOpRel(expr1._str, expr2._str, "<"); })*
+  		{
+		if(tablaactiva.tipo(expr1._str)!=-1)
+			expr1TablaActiva = true;
+		else if(tablageneral.tipo(expr1._str)!=-1)
+			expr1TablaGeneral = true;
+		if(tablaactiva.tipo(expr2._str)!=-1)
+			expr2TablaActiva = true;
+		else if(tablageneral.tipo(expr2._str)!=-1)
+			expr2TablaGeneral = true;
+	
+		if(expr1._tipo==ENTERO && expr2._tipo==ENTERO)
+		{
+			expr1._str = usarOpRel(expr1._str, expr2._str, "<");
+		}else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
+		         (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
+		{
+			expr1._str = usarOpRel(expr1._str, expr2._str, "<");
+		}else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
+		         (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
+		{
+			expr1._str = usarOpRel(expr1._str, expr2._str, "<");
+		}else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
+		         (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
+		{
+			expr1._str = usarOpRel(expr1._str, expr2._str, "<");
+		}else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
+		         (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
+		{
+			expr1._str = usarOpRel(expr1._str, expr2._str, "<");
+		}else
+		{
+			throw new Error("El tipo de las expresiones no es correcto");
+		}
+		}	)*
     {
       return expr1;
     }
@@ -1230,9 +1305,12 @@ Expresion PrimaryExpression() :
  //  t = <INTEGER_LITERAL> {st = new Expresion(usarOpAritmetico(token.image, "", ""), t.kind); }
    t = <INTEGER_LITERAL> {st = new Expresion(usarOpUnario(token.image), t.kind);
 
-							if(Integer.parseInt(token.image) > 32767)// al no usar operador unario no comprobamos limite inferior || Integer.parseInt(token.image) < -32768)
-								throw new Error ("El numero esta fuera del rango de la maquina [-32768..32767]");
-   						  }
+
+		if(Integer.parseInt(token.image) > 32767)		{				// al no usar operador unario no comprobamos limite inferior || Integer.parseInt(token.image) < -32768)
+			throw new Error ("El numero esta fuera del rango de la maquina [-32768..32767]");
+   		}
+   		return st;
+	}
 
   |
    t = <STRING_LITERAL> {
