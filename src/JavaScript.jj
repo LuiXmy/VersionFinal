@@ -986,23 +986,23 @@ Expresion RelationalExpression() :
 	
 		if(expr1._tipo==ENTERO && expr2._tipo==ENTERO)
 		{
-			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "+");
+			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
 		}else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
 		         (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
 		{
-			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "+");
+			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
 		}else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
 		         (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
 		{
-			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "+");
+			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
 		}else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
 		         (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
 		{
-			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "+");
+			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
 		}else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
 		         (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
 		{
-			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "+");
+			expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
 		}else
 		{
 			throw new Error("El tipo de las expresiones no es correcto");

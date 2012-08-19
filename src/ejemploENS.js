@@ -1,2 +1,6 @@
-a=((2+7)-8)-9
-b=a
+var b
+function feo(a,b,c){
+var d=2
+}
+
+a=b<c
