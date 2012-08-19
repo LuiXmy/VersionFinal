@@ -95,20 +95,25 @@ public class eg1
 		}
 		System.out.println("\tcall "+ nombre + ", "+elementos.size());
 	}
-	
+
+
+
+
+
 	public static void usarOpInterrog(String op, String expr1, String expr2, String nombre){
-		String etiqueta1=nuevaEtq();
+		String etiqueta1=nuevaEtq();// etqFalso
 		String etiqueta2=nuevaEtq();
-		String etiqueta3=nuevaEtq();
-		System.out.println("\tif "+ op +" goto "+ etiqueta1);
-		System.out.println("\telse goto "+ etiqueta2);
+		System.out.println("\tif "+ op +" goto "+ etiqueta1); // si no se cumple salto a etqFalso
+		Tercetos ter = new Tercetos();
+ 	    tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoCondicional(op,etiqueta1));
+        lista.add(tupla);
+		usarASIG(nombre,expr1);
+		usarGoto(etiqueta2);
 		usarLabel(etiqueta1);
-		System.out.println("\t"+nombre+"="+expr1);
-		System.out.println("\tgoto "+ etiqueta3);
+		usarASIG(nombre,expr2);
 		usarLabel(etiqueta2);
-		System.out.println("\t"+nombre+"="+expr2);
-		usarLabel(etiqueta3);
 	}
+	
 
 	private static void condicionDo(String etiq, String op){
 		System.out.println("\tif "+ op +" goto "+ etiq);
@@ -891,7 +896,14 @@ void VariableDeclarator() :
 			usarASIG(t.image, expr._str);
 		})?
   |
-		t = < IDENTIFICADOR > < ASIGNACION > expr = Expresion(t.image)
+		t = < IDENTIFICADOR >
+					{// no estabamos metiendo este identificador en la TS
+     					simbolo=new Symbol(t.image, t.beginLine, ENTERO);
+     					tablaactiva.insertarTS(t.image, simbolo);
+     				}
+
+
+			< ASIGNACION > expr = Expresion(t.image)
    		{
    				if(expr._str!="")
    				{
@@ -902,7 +914,7 @@ void VariableDeclarator() :
    						tablageneral.insertarTS(t.image, simbolo);
    				}
    				//Esto hay que arreglarlo
-   				System.out.println("\t"+t.image+"="+expr._str);
+   				System.out.println("\t"+t.image+"="+expr._str+"; asignacionVariable");
    				usarASIG(t.image,expr._str);
    				}
    		}
