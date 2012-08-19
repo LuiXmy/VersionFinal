@@ -120,6 +120,9 @@ public class GenCodFinal {
 			ObtenerValorVector(ambitoterceto);
 		} else if (operacion.equals("IF")) 	{		// If
 			OpCondicional(ambitoterceto);
+		}
+		  else if (operacion.equals("IFP")) 	{		// If Positivo
+				OpCondicionalPositivo(ambitoterceto);
 		} else if (operacion.equals("ETIQUETA")) {	// Etiqueta
 			EtiquetaIf();
 		} else if (operacion.equals("GOTO")) {		// GOTO
@@ -140,7 +143,7 @@ public class GenCodFinal {
 			// TODO	no comprobada
 			RetornoProg(ambitoterceto);
 		} else if (operacion.equals("DIR_RETORNO")) {	// Push DirRetorno donde dev el valor Retornado	
-			PushDirRetorno(ambitoterceto);
+			PushDataRetorno(ambitoterceto);
 		} else if (operacion.equals("+")) {		// Suma
 			nemonico = "ADD";
 			OpBinaria(ambitoterceto);
@@ -211,6 +214,37 @@ public class GenCodFinal {
 					Despla1= ambito_terceto.padre.getDesplazamiento(op1);
 					bw.write("CMP #-"+Despla1+"[.IY], /v_cierto \n");
 					bw.write("BNZ /"+op2+"\n");	// salto si el resultado no es cierto
+				} else {
+					System.err.println("Error: OpCondicional. Identificador no existe.");
+				}
+			} else {
+				System.err.println("Error: OpCondicional. Caso no contemplado.");
+			}
+		} catch (Exception e) {
+			System.err.println("Error: Ejecutar Operacion If.");
+		}
+	}
+	
+	
+	/*
+	 * OpCondicional
+	 * Condicional IF. Si se cumple op1 saltamos a op2
+	 * Usamos las etiquetas de v_cierto y v_falso declaradas en memoria
+	 */
+	private void OpCondicionalPositivo(TablaSimbolos ambito_terceto) {
+		try {
+			int Despla1=0;
+			
+			if (ambito_terceto.existeClave(op1)) {	// op1 local
+				Despla1 = ambito_terceto.getDesplazamiento(op1);
+				bw.write("CMP #-"+Despla1+"[.IX], /v_cierto \n");
+				bw.write("BZ /"+op2+"\n");	// salto si el resultado es cierto
+			} else if (!ambito_terceto.existeClave(op1)) {	// op1 no local	
+				// obtenemos el desplazamiento del simbolo en la tabla padre
+				if (ambito_terceto.padre.existeClave(op1)){
+					Despla1= ambito_terceto.padre.getDesplazamiento(op1);
+					bw.write("CMP #-"+Despla1+"[.IY], /v_cierto \n");
+					bw.write("BZ /"+op2+"\n");	// salto si el resultado es cierto
 				} else {
 					System.err.println("Error: OpCondicional. Identificador no existe.");
 				}
@@ -457,7 +491,7 @@ public class GenCodFinal {
 	private void EjecutarAsignaCad (TablaSimbolos ambito_terceto) {
 		try {
 			// 1- Anadimos a la lista de DATA esta etiqueta con su valor
-			lista_data.add(op1 +": DATA "+ op2 + "\n");
+			lista_data.add(op1 +": DATA "+ "\""+ op2 + "\"" + "\n");
 			// Elimino las comillas que envuelven al string
 			op2=op2.substring(1, op2.length()-1);
 			// 2- Guardo la direccion a la cadena en el marco de pila actual
@@ -864,7 +898,7 @@ public class GenCodFinal {
 	 * Nota: En caso NO devolver nada, void, la funcion se apilara con una direccion IX
 	 * SIEMPRE SE LLAMA A ESTA FUNCION HAYA O NO VALOR DEVUELTO
 	 */
-	private void PushDirRetorno (TablaSimbolos ambito_terceto) {
+	private void PushDataRetorno (TablaSimbolos ambito_terceto) {
 		try {
 			// Resto a IX el desplazamiento para llegar al temporal  NOTA: Realmente guarda el valor de retorno???????
 			bw.write("SUB .IX,#"+ambito_terceto.getDesplazamiento(op1)+"\n");
@@ -935,7 +969,7 @@ public class GenCodFinal {
 			int Despla1=0;
 			
 			if (ambito_terceto.existeClave(op1)) {			// todo local!
-				System.err.println("Estas aki para recoger un valor en local: "+op1);
+				System.out.println("Estas aki para recoger un valor en local: "+op1);
 				// operando1
 				Despla1 = ambito_terceto.getDesplazamiento(op1);
 				bw.write(nemonico+" #-"+Despla1 + "[.IX]\n");

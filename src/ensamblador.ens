@@ -1,23 +1,37 @@
 ORG 0
 MOVE #65432, .SP
 MOVE .SP, .IX ; .IX Puntero de marco de pila
-ADD #-8, .SP
+ADD #-5, .SP
 MOVE .A, .SP
-MOVE #3,#-4[.IX]
-MOVE #2,#-6[.IX]
-CMP #-6[.IX], #-4[.IX]
-BP $3
-MOVE #1, #-7[.IX]
-BN $3
-MOVE #0,#-7[.IX]
-CMP #-7[.IX], /v_cierto 
-BNZ /etq1
-HALT ; Se terminara la ejecucion
+MOVE #99,#-1[.IX]
+MOVE #-1[.IX], #-0[.IX]; Moviendo bloque
+br /etq1 ;Etiqueta Goto
+hola:
+MOVE .SP, .IX
+ADD #-5, .SP
+MOVE .A, .SP
+MOVE #666,#-1[.IX]
+MOVE #-1[.IX], #-0[.IX]; Moviendo bloque
+MOVE #444,#-3[.IX]
+MOVE #-3[.IX], #-2[.IX]; Moviendo bloque
+MOVE [.IX], .IY; ReturnFuncion
+MOVE #-2[.IX], #-0[.IY]; Moviendo bloque
+MOVE .IX, .SP
+RET
 etq1: NOP;Etiqueta IFs
-ADD #-4[.IX], #0
-SUB .IX, .A
-MOVE [.A], #-5[.IX]
-MOVE #-5[.IX], #-3[.IX]; Moviendo bloque
+MOVE #1,#-4[.IX]
+MOVE .SP, .R2
+SUB .SP, #3
+MOVE .A, .SP
+PUSH #-4[.IX]
+MOVE .R2, .SP
+PUSH .SR
+PUSH .IX
+CALL /hola; SALTO A PROGRAMA
+POP .IX
+POP .SR
+POP .R0; Sacando el DIR VALOR retorno
+MOVE #-2[.IX], #-3[.IX]; Moviendo bloque
 HALT ; Se terminara la ejecucion
 ORG 11800
 cad_cierto: DATA "true"

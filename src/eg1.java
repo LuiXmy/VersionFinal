@@ -67,9 +67,11 @@ public class eg1 implements eg1Constants {
 */
         }
 
-        private static void bloqueFuncion(Token t)
+        private static String bloqueFuncion()
         {
-                usarLabel(t.image);
+                String etiqueta= nuevaEtq();
+                usarGoto(etiqueta);
+                return etiqueta;
 //		System.out.println("\tFUNCION "+t.image);
         }
 
@@ -104,6 +106,9 @@ public class eg1 implements eg1Constants {
 
         private static void condicionDo(String etiq, String op){
                 System.out.println("\u005ctif "+ op +" goto "+ etiq);
+                Tercetos ter = new Tercetos();
+            tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoCondicionalFeliz(op,etiq));
+        lista.add(tupla);
         }
 
         private static void intercambiarCondicion(BloqueCondicion blq){
@@ -130,6 +135,12 @@ public class eg1 implements eg1Constants {
         lista.add(tupla);
         }
 
+        private static void usarAsigCadena(String s, String e){
+                System.out.println("\u005ct"+s+"="+e);
+            Tercetos ter = new Tercetos();
+            tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion_cadena(s,e));
+        lista.add(tupla);
+        }
         private static void usarASIGINT(String s, int e){
             System.out.println("\u005ct"+s+"="+e);
             Tercetos ter = new Tercetos();
@@ -189,8 +200,25 @@ public class eg1 implements eg1Constants {
                 String tmp2 = nuevaTmp();
                 Symbol simbolo = new Symbol(tmp2, 1234, ENTERO);
                 tablaactiva.insertarTS(tmp2,simbolo);
-                System.out.println("\u005ct"+tmp2+"="+nombreVector+"["+tmp+"]");
+
+                Tercetos ter = new Tercetos();
+                tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.readExpresion(tmp2));
+                lista.add(tupla);
+                System.out.println("\u005ct"+nombreVector+"["+tmp+"]"+"="+tmp2);
+                asignacionVector(nombreVector,tmp,tmp2);
+
                 return tmp2;
+        }
+
+        private static void operarPrompt(String nombre){
+                String tmp2 = nuevaTmp();
+                Symbol simbolo = new Symbol(tmp2, 1234, ENTERO);
+                tablaactiva.insertarTS(tmp2,simbolo);
+
+                Tercetos ter = new Tercetos();
+                tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.readExpresion(tmp2));
+                lista.add(tupla);
+                usarASIG(nombre, tmp2);
         }
 
 
@@ -206,10 +234,10 @@ public class eg1 implements eg1Constants {
                 lista.add(tupla);
         }
 
-        private static void asignacionVector(String id, int tamano, String exp, String exp1)
+        private static void asignacionVector(String id, String exp, String exp1)
         {
                 String etiq = nuevaEtq();
-                System.out.println("\u005ctif "+exp+" > " +tamano);
+                System.out.println("\u005ctif "+exp+" > ");
                 System.out.println("\u005ctgoto "+etiq);
                 System.out.println("\u005ct"+id+"["+exp+"]"+" = "+exp1);
 
@@ -296,7 +324,7 @@ public class eg1 implements eg1Constants {
               {
                 System.out.println("Oops.");
                 System.out.println(e.getMessage());
-                break;
+                return;
               }
             }
             System.out.println(lista.size());
@@ -410,7 +438,7 @@ public class eg1 implements eg1Constants {
                 (tablageneral.existeClave(id.image) && tablageneral.tipo(id.image)==VECTOR))
                 {
                         // Comprobar si indice > tamaño de vector.
-                        asignacionVector(simbolo.key, simbolo.numeroelementos, exp._str, exp1._str);
+                        asignacionVector(simbolo.key, exp._str, exp1._str);
                 }else
                         {if (true) throw new Error("El Vector en linea "+id.beginLine+" no existe");}
   }
@@ -533,6 +561,9 @@ public class eg1 implements eg1Constants {
       ;
     }
                 System.out.println("RET");
+                Tercetos ter= new Tercetos();
+                tupla_Tercetos tup = new tupla_Tercetos(tablaactiva, ter.retorno(exp._str));
+                lista.add(tup);
   }
 
 // prompt solo lee numeros del teclado, si se mete un caracter habria que lanzar un error en el tiempo de ejecucion, no se si eso podemos hacerlo
@@ -561,6 +592,9 @@ public class eg1 implements eg1Constants {
       jj_la1[4] = jj_gen;
       ;
     }
+         if(!esVector)
+         {
+
                         if (!tablaactiva.existeClave(t.image)) // compruebo primero si existe ID en TS activa. no hace falta comprobar si tablaactiva==tablageneral
                         {
                                 if (!tablageneral.existeClave(t.image)) // compruebo despues si existe ID en TS general. si no existe se agrega a TS general
@@ -569,6 +603,9 @@ public class eg1 implements eg1Constants {
                         tablageneral.insertarTS(t.image, simbolo);
                                 }
                         }
+
+                operarPrompt(t.image);
+                }
     jj_consume_token(PARENIZQ);
   }
 
@@ -642,7 +679,7 @@ public class eg1 implements eg1Constants {
       break;
     case INTEGER_LITERAL:
       t = jj_consume_token(INTEGER_LITERAL);
-        st = new Expresion(usarOpAritmetico(token.image, "", ""), t.kind, t.beginLine);
+        st = new Expresion(usarOpUnario(t.image), t.kind, t.beginLine);
       break;
     default:
       jj_la1[6] = jj_gen;
@@ -662,6 +699,9 @@ public class eg1 implements eg1Constants {
     expr = Expresion("");
     jj_consume_token(PARENIZQ);
                 System.out.println("\u005ctimprime "+ expr._str);
+                Tercetos ter = new Tercetos();
+                        tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.putCadena(expr._str));
+                        lista.add(tupla);
   }
 
   static final public void Funcion() throws ParseException {
@@ -679,7 +719,10 @@ public class eg1 implements eg1Constants {
                 {
                         simbolo=new Symbol(t.image, t.beginLine, FUNCION );
                 }
-                bloqueFuncion(t);
+                String etiqueta=bloqueFuncion();
+                Tercetos ter = new Tercetos();
+                tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.EtiquetaSubprograma(t.image));
+                lista.add(tupla);
     jj_consume_token(PARENDRCHA);
                 tablaactiva = new TablaSimbolos(tablageneral);
                 tablas.put(nombrefuncion, tablaactiva);
@@ -698,8 +741,13 @@ public class eg1 implements eg1Constants {
     jj_consume_token(PARENIZQ);
         simbolo.numArgumentos=numeroParametros;
         simbolo.vArgumentos=vectorSimbolos;
-        tablageneral.insertarTS(t.image, simbolo);
+        tablageneral.insertarTS(t.image, simbolo); //Parametros locales
+
     CompoundStatement();
+        ter= new Tercetos();
+        tupla = new tupla_Tercetos(tablaactiva, ter.retorno_subprograma());
+        lista.add(tupla);
+                usarLabel(etiqueta);
                 System.out.println("La tabla de la funcion tiene: ");
                 //tablaactiva.imprimir();
                 //tablageneral.imprimir();
@@ -840,7 +888,13 @@ public class eg1 implements eg1Constants {
         case ASIGNACION:
           jj_consume_token(ASIGNACION);
           expr = Expresion(t.image);
-                        usarASIG(t.image, expr._str);
+                if(expr._tipo==CADENA)
+                {
+                  usarAsigCadena(t.image, expr._str);
+                }else
+                {
+                  usarASIG(t.image, expr._str);
+                }
           break;
         default:
           jj_la1[12] = jj_gen;
@@ -868,7 +922,12 @@ public class eg1 implements eg1Constants {
                                 }
                                 //Esto hay que arreglarlo
                                 System.out.println("\u005ct"+t.image+"="+expr._str+"; asignacionVariable");
-                                usarASIG(t.image,expr._str);
+                                if(expr._tipo==CADENA)
+                        {
+                                        usarAsigCadena(t.image, expr._str);
+                        }else{
+                                usarASIG(t.image, expr._str);
+                        }
                                 }
         break;
       default:
@@ -1176,7 +1235,7 @@ public class eg1 implements eg1Constants {
                         String etiqueta1=nuevaEtq();// etqFalso
 
                         tmp3 = usarOpRel(tmp2,expr2._str,"<");
-                        System.out.println("\u005ctif "+ tmp3 +" goto "+ etiqueta1); // si no se cumple salto a etqFalso
+                        System.out.println("\u005ctif "+ tmp3 +"/ goto "+ etiqueta1); // si no se cumple salto a etqFalso
                         Tercetos ter = new Tercetos();
                         tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoCondicional(tmp3,etiqueta1));
                         lista.add(tupla);
@@ -1228,15 +1287,42 @@ public class eg1 implements eg1Constants {
   }
 
   static final public Vector LlamadaFuncion(Token nombre) throws ParseException {
-        Vector v = null;
+        Vector< Expresion > v = null;
     jj_consume_token(PARENDRCHA);
                                 //tablageneral.imprimir();
                                 if ((nombre.kind==ID) && (tablageneral.tipo(nombre.image) != FUNCION))
-                                        {if (true) throw new Error("La funcion no esta declarada anteriormente");}
+                                        {if (true) throw new Error("Error: La funcion no esta declarada anteriormente");}
     //Meter aqui lo que viene de llamadafuncion()
     
        v = ArgumentList(nombre);
     jj_consume_token(PARENIZQ);
+        //Inicializamos pila
+                Tercetos ter = new Tercetos();
+                tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.Init_parametros());
+                lista.add(tupla);
+////////////////////////////////////////////////////////////////////////////////777777
+                //Apilamos direccion de retorno
+                ter = new Tercetos();
+                tupla = new tupla_Tercetos(tablaactiva,ter.DirRetornoFuncion());
+                lista.add(tupla);
+
+                //Apilamos parametros
+                for(int i=0; i<v.size(); i++)
+                {
+                        Expresion e=v.get(i);
+                        ter = new Tercetos();
+                        tupla = new tupla_Tercetos(tablaactiva,ter.ApilarParam(e._str));
+                        lista.add(tupla);
+                }
+                ter = new Tercetos();
+                tupla = new tupla_Tercetos(tablaactiva,ter.Fin_parametros());
+                lista.add(tupla);
+
+                //Llamada al subprograma
+        ter = new Tercetos();
+                tupla = new tupla_Tercetos(tablaactiva,ter.llamada_subprograma(nombre.image));
+                lista.add(tupla);
+
                 {if (true) return v;}
     throw new Error("Missing return statement in function");
   }
@@ -1391,63 +1477,9 @@ public class eg1 implements eg1Constants {
     finally { jj_save(4, xla); }
   }
 
-  static private boolean jj_3R_17() {
-    if (jj_3R_19()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_20()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_27() {
-    if (jj_scan_token(MAS)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_24() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_27()) {
-    jj_scanpos = xsp;
-    if (jj_3R_28()) return true;
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_15() {
+  static private boolean jj_3R_12() {
     if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_scan_token(ASIGNACION)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_18() {
-    if (jj_scan_token(INTERROGANTE)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_30() {
-    if (jj_3R_16()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_34() {
-    if (jj_scan_token(STRING_LITERAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_26() {
     if (jj_scan_token(CORCHETEDRCHA)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_4() {
     if (jj_3R_13()) return true;
     return false;
   }
@@ -1462,26 +1494,24 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3R_33() {
-    if (jj_scan_token(INTEGER_LITERAL)) return true;
+  static private boolean jj_3_3() {
+    if (jj_3R_12()) return true;
     return false;
   }
 
-  static private boolean jj_3R_14() {
-    if (jj_scan_token(VAR)) return true;
+  static private boolean jj_3R_11() {
     if (jj_scan_token(IDENTIFICADOR)) return true;
+    if (jj_3R_16()) return true;
     return false;
   }
 
-  static private boolean jj_3R_12() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_scan_token(CORCHETEDRCHA)) return true;
-    if (jj_3R_13()) return true;
+  static private boolean jj_3_2() {
+    if (jj_3R_11()) return true;
     return false;
   }
 
-  static private boolean jj_3R_32() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
+  static private boolean jj_3R_34() {
+    if (jj_scan_token(STRING_LITERAL)) return true;
     return false;
   }
 
@@ -1493,18 +1523,94 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3R_31() {
-    if (jj_scan_token(PARENDRCHA)) return true;
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_21() {
     if (jj_3R_23()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_24()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_22() {
+    if (jj_scan_token(MENOR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14() {
+    if (jj_scan_token(VAR)) return true;
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_25() {
+    if (jj_3R_29()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_30()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_33() {
+    if (jj_scan_token(INTEGER_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_23() {
+    if (jj_3R_25()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_26()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_28() {
+    if (jj_scan_token(MENOS)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_32() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_19() {
+    if (jj_3R_21()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_22()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3_4() {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_31() {
+    if (jj_scan_token(PARENDRCHA)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
+    if (jj_3R_19()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_20()) { jj_scanpos = xsp; break; }
     }
     return false;
   }
@@ -1525,59 +1631,23 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3R_22() {
-    if (jj_scan_token(MENOR)) return true;
+  static private boolean jj_3R_27() {
+    if (jj_scan_token(MAS)) return true;
     return false;
   }
 
-  static private boolean jj_3_3() {
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_25() {
-    if (jj_3R_29()) return true;
+  static private boolean jj_3R_24() {
     Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_30()) { jj_scanpos = xsp; break; }
+    xsp = jj_scanpos;
+    if (jj_3R_27()) {
+    jj_scanpos = xsp;
+    if (jj_3R_28()) return true;
     }
     return false;
   }
 
-  static private boolean jj_3R_11() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_3R_16()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_23() {
-    if (jj_3R_25()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_26()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_28() {
-    if (jj_scan_token(MENOS)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_19() {
-    if (jj_3R_21()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_22()) { jj_scanpos = xsp; break; }
-    }
+  static private boolean jj_3R_18() {
+    if (jj_scan_token(INTERROGANTE)) return true;
     return false;
   }
 
@@ -1599,6 +1669,22 @@ public class eg1 implements eg1Constants {
     if (jj_scan_token(IDENTIFICADOR)) return true;
     if (jj_scan_token(ASIGNACION)) return true;
     if (jj_scan_token(NEW)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_30() {
+    if (jj_3R_16()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_15() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    if (jj_scan_token(ASIGNACION)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_26() {
+    if (jj_scan_token(CORCHETEDRCHA)) return true;
     return false;
   }
 

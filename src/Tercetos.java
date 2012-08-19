@@ -47,6 +47,8 @@ public class Tercetos{
 
     return "ASIGNA,"+op1+","+op2+",\n";
     }
+    
+    
     public String saltoIncondicional(String etiqueta){
 
                 return "GOTO,"+etiqueta+",,\n";
@@ -56,6 +58,11 @@ public class Tercetos{
 
                 return "IF,"+ident+","+etiqueta+",\n";
     }
+    
+    public String saltoCondicionalFeliz(String ident, String etiqueta){
+
+        return "IFP,"+ident+","+etiqueta+",\n";
+}
     
     public String retorno(String nombre){
 
@@ -145,7 +152,7 @@ public class Tercetos{
     
     public String readExpresion(String op1){
      
-    return "READ,"+op1+",,\n";}
+    return "PROMPT,"+op1+",,\n";}
     
     public String opRelacional(String op1, String op2, String temporal){
         return "MENOR,"+op1+","+op2+"," + temporal +"\n";    

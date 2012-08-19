@@ -80,9 +80,11 @@ public class eg1
 */
 	}
 
-	private static void bloqueFuncion(Token t)
+	private static String bloqueFuncion()
 	{
-		usarLabel(t.image);
+		String etiqueta= nuevaEtq();
+		usarGoto(etiqueta);
+		return etiqueta;
 //		System.out.println("\tFUNCION "+t.image);
 	}
 
@@ -117,6 +119,9 @@ public class eg1
 
 	private static void condicionDo(String etiq, String op){
 		System.out.println("\tif "+ op +" goto "+ etiq);
+		Tercetos ter = new Tercetos();
+ 	    tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoCondicionalFeliz(op,etiq));
+        lista.add(tupla);
 	}
 	
 	private static void intercambiarCondicion(BloqueCondicion blq){
@@ -143,6 +148,11 @@ public class eg1
         lista.add(tupla);
 	}
 
+	private static void usarAsigCadena(String s, String e){
+		System.out.println("\t"+s+"="+e);
+ 	    Tercetos ter = new Tercetos();
+ 	    tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion_cadena(s,e));
+        lista.add(tupla);	  	}
 	private static void usarASIGINT(String s, int e){
  	    System.out.println("\t"+s+"="+e);
  	    Tercetos ter = new Tercetos();
@@ -202,9 +212,25 @@ public class eg1
 		String tmp2 = nuevaTmp();
 		Symbol simbolo = new Symbol(tmp2, 1234, ENTERO);
 		tablaactiva.insertarTS(tmp2,simbolo);
-		System.out.println("\t"+tmp2+"="+nombreVector+"["+tmp+"]");
+
+		Tercetos ter = new Tercetos();
+		tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.readExpresion(tmp2));
+		lista.add(tupla);	
+		System.out.println("\t"+nombreVector+"["+tmp+"]"+"="+tmp2);
+		asignacionVector(nombreVector,tmp,tmp2);
+		  
 		return tmp2;
 	}
+
+	private static void operarPrompt(String nombre){
+	  	String tmp2 = nuevaTmp();
+		Symbol simbolo = new Symbol(tmp2, 1234, ENTERO);
+		tablaactiva.insertarTS(tmp2,simbolo);
+
+		Tercetos ter = new Tercetos();
+		tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.readExpresion(tmp2));
+		lista.add(tupla);
+		usarASIG(nombre, tmp2);	}
 
 
 	private static void copiarVectorEnOtro(Symbol tmp, Symbol tmp2)
@@ -219,10 +245,10 @@ public class eg1
 		lista.add(tupla);
 	}
 
-	private static void asignacionVector(String id, int tamano, String exp, String exp1)
+	private static void asignacionVector(String id, String exp, String exp1)
 	{
 		String etiq = nuevaEtq();
-		System.out.println("\tif "+exp+" > " +tamano);
+		System.out.println("\tif "+exp+" > ");
 		System.out.println("\tgoto "+etiq);
 		System.out.println("\t"+id+"["+exp+"]"+" = "+exp1);
 
@@ -309,7 +335,7 @@ public class eg1
 	      {
 	        System.out.println("Oops.");
 	        System.out.println(e.getMessage());
-	        break;
+	        return;
 	      }
 	    }
 	    System.out.println(lista.size());
@@ -508,7 +534,7 @@ void VectorStatement() :
 		(tablageneral.existeClave(id.image) && tablageneral.tipo(id.image)==VECTOR))
 		{
 		  	// Comprobar si indice > tamaño de vector.
-			asignacionVector(simbolo.key, simbolo.numeroelementos, exp._str, exp1._str);
+			asignacionVector(simbolo.key, exp._str, exp1._str);
 		}else
 			throw new Error("El Vector en linea "+id.beginLine+" no existe");
   }
@@ -568,7 +594,7 @@ void FunctionStatement() :
 {
   tok=< IDENTIFICADOR > elementos=LlamadaFuncion(tok)
   {
- 		declfun=tablageneral.obtenerSimbolo(tok.image);
+ 		declfun=tablageneral.obtenerSimbolo(tok.image);			
  		vdecl=declfun.vArgumentos;
  		for (int i=0; i<vdecl.size(); i++)
  		{
@@ -626,6 +652,9 @@ void ReturnStatement() :
         })?
         {
         	System.out.println("RET");
+	       	Tercetos ter= new Tercetos();
+     		tupla_Tercetos tup = new tupla_Tercetos(tablaactiva, ter.retorno(exp._str));
+    	 	lista.add(tup);
         }
         
 
@@ -659,8 +688,10 @@ void PromptStatement() :
 			}
     	  }
        }
+       
        )?
        {
+         if(!esVector)         {           
 			if (!tablaactiva.existeClave(t.image)) // compruebo primero si existe ID en TS activa. no hace falta comprobar si tablaactiva==tablageneral
 			{
 		   		if (!tablageneral.existeClave(t.image)) // compruebo despues si existe ID en TS general. si no existe se agrega a TS general
@@ -669,6 +700,9 @@ void PromptStatement() :
     	    		tablageneral.insertarTS(t.image, simbolo);
 				}
 			}
+
+		operarPrompt(t.image);	
+		}
 		}")"
 }
 
@@ -746,11 +780,12 @@ Expresion PromptPrimaryExpression() :
     {
     	st = new Expresion(t.image, t.kind, t.beginLine);
    		st.t = t;
+   		
    	} 
   |
     t = <INTEGER_LITERAL>
     {
-    	st = new Expresion(usarOpAritmetico(token.image, "", ""), t.kind, t.beginLine);
+    	st = new Expresion(usarOpUnario(t.image), t.kind, t.beginLine);
     }
   )
   {
@@ -768,6 +803,10 @@ void DocumentStatement() :
     < DOCUMENT > < PUNTO > < WRITE > "(" expr=Expresion("") ")"
     {
     		System.out.println("\timprime "+ expr._str);
+    		Tercetos ter = new Tercetos();
+			tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.putCadena(expr._str));
+			lista.add(tupla);
+    		
     }
 }
 
@@ -790,7 +829,10 @@ void Funcion() : //Declaracion de funciones
 		{
 			simbolo=new Symbol(t.image, t.beginLine, FUNCION );
 		}
-		bloqueFuncion(t);
+		String etiqueta=bloqueFuncion();
+		Tercetos ter = new Tercetos();
+ 	   	tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.EtiquetaSubprograma(t.image));
+		lista.add(tupla);
    }"("
    {
    		tablaactiva = new TablaSimbolos(tablageneral);
@@ -806,9 +848,13 @@ void Funcion() : //Declaracion de funciones
     {
     	simbolo.numArgumentos=numeroParametros;
     	simbolo.vArgumentos=vectorSimbolos;
-    	tablageneral.insertarTS(t.image, simbolo);
+    	tablageneral.insertarTS(t.image, simbolo); //Parametros locales
     }CompoundStatement()
    {
+     	ter= new Tercetos();
+     	tupla = new tupla_Tercetos(tablaactiva, ter.retorno_subprograma());
+     	lista.add(tupla);
+		usarLabel(etiqueta);
    		System.out.println("La tabla de la funcion tiene: ");
    		//tablaactiva.imprimir();
    		//tablageneral.imprimir();
@@ -911,7 +957,10 @@ void VariableDeclarator() :
      	}
      	(< ASIGNACION > expr = Expresion(t.image)
      	{
-			usarASIG(t.image, expr._str);
+     	  	if(expr._tipo==CADENA)     	  	{
+     	  	  usarAsigCadena(t.image, expr._str);
+     	  	}else     	  	{     	  	  usarASIG(t.image, expr._str);
+     	  	}
 		})?
   |
 		t = < IDENTIFICADOR >
@@ -935,7 +984,12 @@ void VariableDeclarator() :
    				}
    				//Esto hay que arreglarlo
    				System.out.println("\t"+t.image+"="+expr._str+"; asignacionVariable");
-   				usarASIG(t.image,expr._str);
+   				if(expr._tipo==CADENA)
+     	  		{
+					usarAsigCadena(t.image, expr._str);
+     	  		}else{
+     	  	  		usarASIG(t.image, expr._str);
+     	  		}
    				}
    		}
 
@@ -1188,7 +1242,7 @@ Expresion VectorExpression() :
 			String etiqueta1=nuevaEtq();// etqFalso
 			
 			tmp3 = usarOpRel(tmp2,expr2._str,"<");
-			System.out.println("\tif "+ tmp3 +" goto "+ etiqueta1); // si no se cumple salto a etqFalso
+			System.out.println("\tif "+ tmp3 +"/ goto "+ etiqueta1); // si no se cumple salto a etqFalso
 			Tercetos ter = new Tercetos();
  	   		tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoCondicional(tmp3,etiqueta1));
 			lista.add(tupla);
@@ -1238,20 +1292,50 @@ Expresion FunctionExpression() :
 
 Vector LlamadaFuncion(Token nombre) : //Solo se la llama desde functionexpresion
 {
-	Vector v = null;
+	Vector< Expresion > v = null;
 }
 {
    "("
 		   {
 		   		//tablageneral.imprimir();
    				if ((nombre.kind==ID) && (tablageneral.tipo(nombre.image) != FUNCION))
-					throw new Error("La funcion no esta declarada anteriormente");				
+					throw new Error("Error: La funcion no esta declarada anteriormente");				
 		   }
-
+		
+		
+		
+		
 		//Meter aqui lo que viene de llamadafuncion()
-
+		
    v=ArgumentList(nombre) ")"
+   
    {
+     	
+     	//Inicializamos pila
+		Tercetos ter = new Tercetos();
+ 	   	tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.Init_parametros());
+		lista.add(tupla);
+////////////////////////////////////////////////////////////////////////////////777777
+		//Apilamos direccion de retorno
+		ter = new Tercetos();
+ 	   	tupla = new tupla_Tercetos(tablaactiva,ter.DirRetornoFuncion());
+		lista.add(tupla);
+		
+		//Apilamos parametros
+		for(int i=0; i<v.size(); i++)		{			Expresion e=v.get(i);
+			ter = new Tercetos();
+ 	   		tupla = new tupla_Tercetos(tablaactiva,ter.ApilarParam(e._str));
+			lista.add(tupla);
+		}
+		ter = new Tercetos();
+ 	   	tupla = new tupla_Tercetos(tablaactiva,ter.Fin_parametros());
+		lista.add(tupla);
+
+		//Llamada al subprograma
+     	ter = new Tercetos();
+ 	   	tupla = new tupla_Tercetos(tablaactiva,ter.llamada_subprograma(nombre.image));
+		lista.add(tupla);
+		
    		return v;
    }
 }
