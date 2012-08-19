@@ -21,9 +21,16 @@ public class eg1 implements eg1Constants {
 
         private static void usarLabel(String label){
                 System.out.println(label+":");
+                Tercetos ter = new Tercetos();
+            tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.InsertarEtiqueta(label));
+        lista.add(tupla);
         }
+
         private static void usarGoto(String label){
                 System.out.println("\u005ctgoto "+ label);
+                Tercetos ter = new Tercetos();
+            tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoIncondicional(label));
+        lista.add(tupla);
         }
 
         private static String OpRelacional(String e1,String e2,String op){
@@ -43,12 +50,21 @@ public class eg1 implements eg1Constants {
 //		return blq;
 //	}
 
-        private static BloqueCondicion usarOpRelacional(BloqueCondicion blq, String op){
-                blq.etqVerdad = nuevaEtq();
+
+
+
+        private static void usarOpRelacional(BloqueCondicion blq, String op){
+//		blq.etqVerdad = nuevaEtq();
                 blq.etqFalso = nuevaEtq();// habria que meter un temporal intermedio para gestionar e1+op+e2
-                System.out.println("\u005ctif "+ op +" goto "+ blq.etqVerdad);
-                usarGoto(blq.etqFalso);
-                return blq;
+                System.out.println("\u005ctif "+ op +" goto "+ blq.etqFalso);
+                Tercetos ter = new Tercetos();
+            tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoCondicional(op,blq.etqFalso));
+        lista.add(tupla);
+
+/*		System.out.println("\tif "+ op +" goto "+ blq.etqVerdad);
+		usarGoto(blq.etqFalso);
+		return blq;
+*/
         }
 
         private static void bloqueFuncion(Token t)
@@ -67,19 +83,24 @@ public class eg1 implements eg1Constants {
                 System.out.println("\u005ctcall "+ nombre + ", "+elementos.size());
         }
 
+
+
+
+
         public static void usarOpInterrog(String op, String expr1, String expr2, String nombre){
-                String etiqueta1=nuevaEtq();
+                String etiqueta1=nuevaEtq();// etqFalso
                 String etiqueta2=nuevaEtq();
-                String etiqueta3=nuevaEtq();
-                System.out.println("\u005ctif "+ op +" goto "+ etiqueta1);
-                System.out.println("\u005ctelse goto "+ etiqueta2);
+                System.out.println("\u005ctif "+ op +" goto "+ etiqueta1); // si no se cumple salto a etqFalso
+                Tercetos ter = new Tercetos();
+            tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.saltoCondicional(op,etiqueta1));
+        lista.add(tupla);
+                usarASIG(nombre,expr1);
+                usarGoto(etiqueta2);
                 usarLabel(etiqueta1);
-                System.out.println("\u005ct"+nombre+"="+expr1);
-                System.out.println("\u005ctgoto "+ etiqueta3);
+                usarASIG(nombre,expr2);
                 usarLabel(etiqueta2);
-                System.out.println("\u005ct"+nombre+"="+expr2);
-                usarLabel(etiqueta3);
         }
+
 
         private static void condicionDo(String etiq, String op){
                 System.out.println("\u005ctif "+ op +" goto "+ etiq);
@@ -105,7 +126,7 @@ public class eg1 implements eg1Constants {
         private static void usarASIG(String s, String e){
             System.out.println("\u005ct"+s+"="+e);
             Tercetos ter = new Tercetos();
-        tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion(s,e));
+            tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.asignacion(s,e));
         lista.add(tupla);
         }
 
@@ -123,7 +144,7 @@ public class eg1 implements eg1Constants {
 
         private static String usarOpAritmetico(String e1, String e2, String op){
                 String tmp = nuevaTmp();
-                Symbol simbolo = new Symbol(tmp, 1234, ENTERO, 1);  // Tamaño incrustado
+                Symbol simbolo = new Symbol(tmp, 1234, ENTERO,1);  // Tamaño incrustado
                 tablaactiva.insertarTS(tmp,simbolo);
                 System.out.println("\u005ct"+tmp+"="+e1+op+e2);
                 Tercetos ter = new Tercetos();
@@ -131,6 +152,31 @@ public class eg1 implements eg1Constants {
                 lista.add(tupla);
                 return tmp;
         }
+
+
+        private static String usarOpRel(String e1, String e2, String op){
+                String tmp = nuevaTmp();
+                Symbol simbolo = new Symbol(tmp, 1234, ENTERO,1);  // Tamaño incrustado
+                tablaactiva.insertarTS(tmp,simbolo);
+                System.out.println("\u005ct"+tmp+"="+e1+op+e2);
+                Tercetos ter = new Tercetos();
+                tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.opRelacional(e1,e2,tmp));
+                lista.add(tupla);
+                return tmp;
+        }
+
+
+        private static String usarOpLogico(String e1, String e2, String op){
+                String tmp = nuevaTmp();
+                Symbol simbolo = new Symbol(tmp, 1234, ENTERO,1);  // Tamaño incrustado
+                tablaactiva.insertarTS(tmp,simbolo);
+                System.out.println("\u005ct"+tmp+"="+e1+op+e2);
+                Tercetos ter = new Tercetos();
+                tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.opLogico(e1,e2,tmp));
+                lista.add(tupla);
+                return tmp;
+        }
+
 
         private static String operarVectorPrompt(String tmp, String nombreVector){
                 String tmp2 = nuevaTmp();
@@ -422,7 +468,8 @@ public class eg1 implements eg1Constants {
     jj_consume_token(IF);
     expr = Expresion("");
                                                                         usarOpRelacional(blq, expr._str);
-                                                                usarLabel(blq.etqVerdad);
+                                                                //usarLabel(blq.etqVerdad);
+
     Sentencia();
                                                                         usarLabel(blq.etqFalso);
   }
@@ -784,6 +831,13 @@ public class eg1 implements eg1Constants {
         break;
       case IDENTIFICADOR:
         t = jj_consume_token(IDENTIFICADOR);
+                                         // no estabamos metiendo este identificador en la TS
+                                        // creo que habria que mirar primero si está en la tabla, si no no se inserta, seguramente haya que com
+                                                if(!existeEnAlgunaTS(t.image))
+                                                {
+                                                        simbolo=new Symbol(t.image, t.beginLine, ENTERO);
+                                                tablaactiva.insertarTS(t.image, simbolo);
+                                        }
         jj_consume_token(ASIGNACION);
         expr = Expresion(t.image);
                                 if(expr._str!="")
@@ -793,10 +847,10 @@ public class eg1 implements eg1Constants {
                                         {
                                                 simbolo = new Symbol(t.image, t.beginLine, ENTERO);
                                                 tablageneral.insertarTS(t.image, simbolo);
-                                        }
-                                        //Esto hay que arreglarlo
-                                        //System.out.println("\t"+t.image+"="+expr._str);
-                                        usarASIG(t.image, expr._str);
+                                }
+                                //Esto hay que arreglarlo
+                                System.out.println("\u005ct"+t.image+"="+expr._str+"; asignacionVariable");
+                                usarASIG(t.image,expr._str);
                                 }
         break;
       default:
@@ -848,13 +902,17 @@ public class eg1 implements eg1Constants {
       }
       jj_consume_token(AND);
       expr2 = RelationalExpression();
-                                                                                                                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "&&");
+                                                                                                                        expr1._str = usarOpLogico(expr1._str, expr2._str, "&&");
     }
         {if (true) return expr1;}
     throw new Error("Missing return statement in function");
   }
 
   static final public Expresion RelationalExpression() throws ParseException {
+        boolean expr1TablaActiva = false;
+        boolean expr2TablaActiva = false;
+        boolean expr1TablaGeneral = false;
+        boolean expr2TablaGeneral = false;
         Expresion expr1 = null;
         Expresion expr2 = null;
         Expresion exprCond = null;
@@ -873,7 +931,38 @@ public class eg1 implements eg1Constants {
       }
       jj_consume_token(MENOR);
       expr2 = AdditiveExpression();
-                expr1._str = usarOpAritmetico(expr1._str, expr2._str, "<");
+                if(tablaactiva.tipo(expr1._str)!=-1)
+                        expr1TablaActiva = true;
+                else if(tablageneral.tipo(expr1._str)!=-1)
+                        expr1TablaGeneral = true;
+                if(tablaactiva.tipo(expr2._str)!=-1)
+                        expr2TablaActiva = true;
+                else if(tablageneral.tipo(expr2._str)!=-1)
+                        expr2TablaGeneral = true;
+
+                if(expr1._tipo==ENTERO && expr2._tipo==ENTERO)
+                {
+                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "+");
+                }else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
+                         (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
+                {
+                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "+");
+                }else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
+                         (tablaactiva.tipo(expr2._str)==ENTERO&&expr2TablaActiva))
+                {
+                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "+");
+                }else if((tablaactiva.tipo(expr1._str)==ENTERO&&expr1TablaActiva) &&
+                         (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
+                {
+                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "+");
+                }else if((tablageneral.tipo(expr1._str)==ENTERO&&expr1TablaGeneral) &&
+                         (tablageneral.tipo(expr2._str)==ENTERO&&expr2TablaGeneral))
+                {
+                        expr1._str = usarOpAritmetico(expr1._str, expr2._str, "+");
+                }else
+                {
+                        {if (true) throw new Error("El tipo de las expresiones no es correcto");}
+                }
     }
       {if (true) return expr1;}
     throw new Error("Missing return statement in function");
@@ -1156,6 +1245,9 @@ public class eg1 implements eg1Constants {
       //  t = <INTEGER_LITERAL> {st = new Expresion(usarOpAritmetico(token.image, "", ""), t.kind); }
          t = jj_consume_token(INTEGER_LITERAL);
                           st = new Expresion(usarOpUnario(token.image), t.kind);
+
+                                                        if(Integer.parseInt(token.image) > 32767);// al no usar operador unario no comprobamos limite inferior || Integer.parseInt(token.image) < -32768)
+                                                                {if (true) throw new Error ("El numero esta fuera del rango de la maquina [-32768..32767]");}
       break;
     case STRING_LITERAL:
       t = jj_consume_token(STRING_LITERAL);
@@ -1214,6 +1306,24 @@ public class eg1 implements eg1Constants {
     finally { jj_save(4, xla); }
   }
 
+  static private boolean jj_3R_22() {
+    if (jj_scan_token(MENOR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_3R_17()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_18()) jj_scanpos = xsp;
+    return false;
+  }
+
+  static private boolean jj_3R_34() {
+    if (jj_scan_token(STRING_LITERAL)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_23() {
     if (jj_3R_25()) return true;
     Token xsp;
@@ -1224,11 +1334,6 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3_3() {
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_28() {
     if (jj_scan_token(MENOS)) return true;
     return false;
@@ -1236,6 +1341,11 @@ public class eg1 implements eg1Constants {
 
   static private boolean jj_3R_16() {
     if (jj_scan_token(PARENDRCHA)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_3() {
+    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -1250,26 +1360,18 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3R_20() {
-    if (jj_scan_token(AND)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_34() {
-    if (jj_scan_token(STRING_LITERAL)) return true;
+  static private boolean jj_3R_19() {
+    if (jj_3R_21()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_22()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
   static private boolean jj_3R_33() {
     if (jj_scan_token(INTEGER_LITERAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13() {
-    if (jj_3R_17()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_18()) jj_scanpos = xsp;
     return false;
   }
 
@@ -1285,11 +1387,6 @@ public class eg1 implements eg1Constants {
     jj_scanpos = xsp;
     if (jj_3R_28()) return true;
     }
-    return false;
-  }
-
-  static private boolean jj_3R_22() {
-    if (jj_scan_token(MENOR)) return true;
     return false;
   }
 
@@ -1346,21 +1443,6 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3_1() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_19() {
-    if (jj_3R_21()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_22()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
   static private boolean jj_3R_15() {
     if (jj_scan_token(IDENTIFICADOR)) return true;
     if (jj_scan_token(ASIGNACION)) return true;
@@ -1377,8 +1459,8 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3_4() {
-    if (jj_3R_13()) return true;
+  static private boolean jj_3_1() {
+    if (jj_3R_10()) return true;
     return false;
   }
 
@@ -1397,6 +1479,11 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
+  static private boolean jj_3_4() {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_21() {
     if (jj_3R_23()) return true;
     Token xsp;
@@ -1412,16 +1499,21 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3R_12() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_scan_token(CORCHETEDRCHA)) return true;
-    if (jj_3R_13()) return true;
+  static private boolean jj_3R_20() {
+    if (jj_scan_token(AND)) return true;
     return false;
   }
 
   static private boolean jj_3R_14() {
     if (jj_scan_token(VAR)) return true;
     if (jj_scan_token(IDENTIFICADOR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_12() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    if (jj_scan_token(CORCHETEDRCHA)) return true;
+    if (jj_3R_13()) return true;
     return false;
   }
 
