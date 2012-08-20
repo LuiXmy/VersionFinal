@@ -1301,9 +1301,13 @@ public class eg1 implements eg1Constants {
                 tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.Init_parametros());
                 lista.add(tupla);
 ////////////////////////////////////////////////////////////////////////////////777777
+                String retorno = nuevaTmp();
+                Symbol retornoSim = new Symbol(retorno,1234,ENTERO);
+                tablaactiva.insertarTS(retorno,retornoSim);
+
                 //Apilamos direccion de retorno
                 ter = new Tercetos();
-                tupla = new tupla_Tercetos(tablaactiva,ter.DirRetornoFuncion());
+                tupla = new tupla_Tercetos(tablaactiva,ter.DirRetornoFuncion(retorno));
                 lista.add(tupla);
 
                 //Apilamos parametros
@@ -1499,6 +1503,11 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
+  static private boolean jj_3R_34() {
+    if (jj_scan_token(STRING_LITERAL)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_11() {
     if (jj_scan_token(IDENTIFICADOR)) return true;
     if (jj_3R_16()) return true;
@@ -1507,11 +1516,6 @@ public class eg1 implements eg1Constants {
 
   static private boolean jj_3_2() {
     if (jj_3R_11()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_34() {
-    if (jj_scan_token(STRING_LITERAL)) return true;
     return false;
   }
 
@@ -1530,6 +1534,11 @@ public class eg1 implements eg1Constants {
       xsp = jj_scanpos;
       if (jj_3R_24()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  static private boolean jj_3R_33() {
+    if (jj_scan_token(INTEGER_LITERAL)) return true;
     return false;
   }
 
@@ -1554,8 +1563,8 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3R_33() {
-    if (jj_scan_token(INTEGER_LITERAL)) return true;
+  static private boolean jj_3R_32() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
     return false;
   }
 
@@ -1574,13 +1583,14 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3R_28() {
-    if (jj_scan_token(MENOS)) return true;
+  static private boolean jj_3R_31() {
+    if (jj_scan_token(PARENDRCHA)) return true;
+    if (jj_3R_13()) return true;
     return false;
   }
 
-  static private boolean jj_3R_32() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
+  static private boolean jj_3R_28() {
+    if (jj_scan_token(MENOS)) return true;
     return false;
   }
 
@@ -1590,27 +1600,6 @@ public class eg1 implements eg1Constants {
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_22()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3_4() {
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_31() {
-    if (jj_scan_token(PARENDRCHA)) return true;
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_17() {
-    if (jj_3R_19()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_20()) { jj_scanpos = xsp; break; }
     }
     return false;
   }
@@ -1627,6 +1616,21 @@ public class eg1 implements eg1Constants {
     if (jj_3R_34()) return true;
     }
     }
+    }
+    return false;
+  }
+
+  static private boolean jj_3_4() {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
+    if (jj_3R_19()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_20()) { jj_scanpos = xsp; break; }
     }
     return false;
   }

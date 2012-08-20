@@ -1,28 +1,32 @@
 ORG 0
 MOVE #65432, .SP
 MOVE .SP, .IX ; .IX Puntero de marco de pila
-ADD #-5, .SP
+ADD #-6, .SP
 MOVE .A, .SP
 MOVE #99,#-1[.IX]
 MOVE #-1[.IX], #-0[.IX]; Moviendo bloque
 br /etq1 ;Etiqueta Goto
 hola:
 MOVE .SP, .IX
-ADD #-5, .SP
+ADD #-6, .SP
 MOVE .A, .SP
 MOVE #666,#-1[.IX]
 MOVE #-1[.IX], #-0[.IX]; Moviendo bloque
-MOVE #444,#-3[.IX]
-MOVE #-3[.IX], #-2[.IX]; Moviendo bloque
+MOVE #333,#-2[.IX]
+MOVE #222,#-3[.IX]
+ADD #-2[.IX], #-3[.IX]
+MOVE .A, #-4[.IX]
 MOVE [.IX], .IY; ReturnFuncion
-MOVE #-2[.IX], #-0[.IY]; Moviendo bloque
+MOVE #-4[.IX], #-0[.IY]; Moviendo bloque
 MOVE .IX, .SP
 RET
 etq1: NOP;Etiqueta IFs
 MOVE #1,#-4[.IX]
 MOVE .SP, .R2
-SUB .SP, #3
+SUB .SP, #4
 MOVE .A, .SP
+SUB .IX,#5
+PUSH .A; Apilando donde se guardara el retorno funcion
 PUSH #-4[.IX]
 MOVE .R2, .SP
 PUSH .SR

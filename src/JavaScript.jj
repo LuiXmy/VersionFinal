@@ -1316,9 +1316,13 @@ Vector LlamadaFuncion(Token nombre) : //Solo se la llama desde functionexpresion
  	   	tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.Init_parametros());
 		lista.add(tupla);
 ////////////////////////////////////////////////////////////////////////////////777777
+		String retorno = nuevaTmp();
+		Symbol retornoSim = new Symbol(retorno,1234,ENTERO);
+		tablaactiva.insertarTS(retorno,retornoSim);
+
 		//Apilamos direccion de retorno
 		ter = new Tercetos();
- 	   	tupla = new tupla_Tercetos(tablaactiva,ter.DirRetornoFuncion());
+ 	   	tupla = new tupla_Tercetos(tablaactiva,ter.DirRetornoFuncion(retorno));
 		lista.add(tupla);
 		
 		//Apilamos parametros

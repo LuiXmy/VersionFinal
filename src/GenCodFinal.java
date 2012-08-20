@@ -835,7 +835,7 @@ public class GenCodFinal {
 		try {
 			// Movemos el SP tantas posiciones como sean necesarias.
 			bw.write("MOVE .SP, .R2\n");
-			bw.write("SUB .SP, #3\n");	//	Atento a los elem q apilas antes de CALL
+			bw.write("SUB .SP, #4\n");	//	Atento a los elem q apilas antes de CALL
 			bw.write("MOVE .A, .SP\n");
 			// Ahora tendran que venir PARAM para apilar
 		} catch (Exception e) {
@@ -931,23 +931,21 @@ public class GenCodFinal {
 				Despla1 = ambito_terceto.getDesplazamiento(op1);
 				tamanio = ambito_terceto.getTamano(op1);
 				CopiaBloqMem(".IX", Despla1, ".IY", 0, tamanio);
-			} /* else if (!ambito_terceto.existeClave(op1)) {	// op1 no local
+			}  else if (!ambito_terceto.existeClave(op1)) {	// op1 no local
 				// TODO NO FUNCIONA
-				 * Para que sirve esta rama? Siempre hay que poner la dir de retorno en el registro de activacion actual.
+				// Para que sirve esta rama? Siempre hay que poner la dir de retorno en el registro de activacion actual.
 				// Tenemos en R9 la direccion a partir de la cual debemos dejar el valor de retorno
 				// Dejará en IY el marco de pila para acceder al simbolo op.
 				bw.write("MOVE #"+dirGlobal+",.IY\n");
-				bw.write("MOVE .IY, .R9\n");
+				
 				// obtenemos el desplazamiento del simbolo introducido en dicho ambito
 				Despla1 = ambito_terceto.padre.getDesplazamiento(op1);
-				bw.write("SUB .R9, #"+Despla1+"\n");
-				bw.write("MOVE .A, .R9\n");
-				tamanio = TamSimbolo(tabla_op_lejano, op1, Atributo1);
+				bw.write("SUB .IY, #"+Despla1+"\n");
+				bw.write("MOVE .A, .IY\n");
+				tamanio = ambito_terceto.padre.getTamano(op1);
 				// Movemos la direccion de Retorno a un Registro
 				bw.write("MOVE #4[.IX], .IY; ReturnFuncion\n");	// IY tiene la dir donde se guardara el valorRetorno
-				// Necesitamo, en caso de objeto el simbolo
-				CopiaBloqMem(".R9", 0, ".IY", 0, tamanio);
-			} */else {
+			} else {
 				System.err.println("Error: ReturnOp. Caso no contemplado.");
 			}
 
