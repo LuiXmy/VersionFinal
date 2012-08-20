@@ -1320,11 +1320,8 @@ Vector LlamadaFuncion(Token nombre) : //Solo se la llama desde functionexpresion
 		Symbol retornoSim = new Symbol(retorno,1234,ENTERO);
 		tablaactiva.insertarTS(retorno,retornoSim);
 
-		//Apilamos direccion de retorno
-		ter = new Tercetos();
- 	   	tupla = new tupla_Tercetos(tablaactiva,ter.DirRetornoFuncion(retorno));
-		lista.add(tupla);
 		
+				
 		//Apilamos parametros
 		for(int i=0; i<v.size(); i++)		{			Expresion e=v.get(i);
 			ter = new Tercetos();
@@ -1334,6 +1331,13 @@ Vector LlamadaFuncion(Token nombre) : //Solo se la llama desde functionexpresion
 		ter = new Tercetos();
  	   	tupla = new tupla_Tercetos(tablaactiva,ter.Fin_parametros());
 		lista.add(tupla);
+
+
+		//Apilamos direccion de retorno
+		ter = new Tercetos();
+ 	   	tupla = new tupla_Tercetos(tablaactiva,ter.DirRetornoFuncion(retorno));
+		lista.add(tupla);
+		
 
 		//Llamada al subprograma
      	ter = new Tercetos();

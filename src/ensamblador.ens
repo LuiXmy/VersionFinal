@@ -10,14 +10,13 @@ hola:
 MOVE .SP, .IX
 ADD #-6, .SP
 MOVE .A, .SP
-MOVE #666,#-1[.IX]
-MOVE #-1[.IX], #-0[.IX]; Moviendo bloque
-MOVE #333,#-2[.IX]
-MOVE #222,#-3[.IX]
-ADD #-2[.IX], #-3[.IX]
-MOVE .A, #-4[.IX]
+MOVE #666,#-2[.IX]
+MOVE #-2[.IX], #-1[.IX]; Moviendo bloque
 MOVE [.IX], .IY; ReturnFuncion
-MOVE #-4[.IX], #-0[.IY]; Moviendo bloque
+MOVE .IX, .IY ; EmPIEZA AQUIIIIIIIII 
+ADD #4, .IY
+MOVE .A, .IY
+MOVE #-1[.IX], #-0[.IY]; Moviendo bloque
 MOVE .IX, .SP
 RET
 etq1: NOP;Etiqueta IFs
@@ -25,10 +24,10 @@ MOVE #1,#-4[.IX]
 MOVE .SP, .R2
 SUB .SP, #4
 MOVE .A, .SP
-SUB .IX,#5
-PUSH .A; Apilando donde se guardara el retorno funcion
 PUSH #-4[.IX]
 MOVE .R2, .SP
+SUB .IX,#5
+PUSH .A; Apilando donde se guardara el retorno funcion
 PUSH .SR
 PUSH .IX
 CALL /hola; SALTO A PROGRAMA

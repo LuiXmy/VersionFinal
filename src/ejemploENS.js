@@ -1,6 +1,6 @@
 v=99
 function hola(a){
-a=666
-return 333+222
+b=666
+return b
 }
 var z=hola(1)

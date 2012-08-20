@@ -775,6 +775,7 @@ public class GenCodFinal {
 			int despl_local=ambito_terceto.desplazamientoTabla();
 			// Escribimos la etiqueta
 			bw.write(subprograma.toLowerCase() +":\n");		// tiene q ser en minusculas!!
+			
 			bw.write("MOVE .SP, .IX\n");					// Base del marco de pila
 			bw.write("ADD #-" + despl_local + ", .SP\n");	// Techo del Marco de pila
 			bw.write("MOVE .A, .SP\n");
@@ -837,6 +838,7 @@ public class GenCodFinal {
 			bw.write("MOVE .SP, .R2\n");
 			bw.write("SUB .SP, #4\n");	//	Atento a los elem q apilas antes de CALL
 			bw.write("MOVE .A, .SP\n");
+			
 			// Ahora tendran que venir PARAM para apilar
 		} catch (Exception e) {
 			System.err.println("Error: Ejecutar InitParam.");
@@ -902,6 +904,7 @@ public class GenCodFinal {
 		try {
 			// Resto a IX el desplazamiento para llegar al temporal  NOTA: Realmente guarda el valor de retorno???????
 			bw.write("SUB .IX,#"+ambito_terceto.getDesplazamiento(op1)+"\n");
+			//bw.write("SUB .IX,#1\n");//SI NO FUNCIONA FUERA
 			// Apilo dicha direccion en la cima
 			bw.write("PUSH .A; Apilando donde se guardara el retorno funcion\n");
 		} catch (Exception e) {
@@ -930,6 +933,9 @@ public class GenCodFinal {
 				// operando1
 				Despla1 = ambito_terceto.getDesplazamiento(op1);
 				tamanio = ambito_terceto.getTamano(op1);
+				bw.write("MOVE .IX, .IY ; EmPIEZA AQUIIIIIIIII \n");
+				bw.write("ADD #4, .IY\n");
+				bw.write("MOVE .A, .IY\n");
 				CopiaBloqMem(".IX", Despla1, ".IY", 0, tamanio);
 			}  else if (!ambito_terceto.existeClave(op1)) {	// op1 no local
 				// TODO NO FUNCIONA
