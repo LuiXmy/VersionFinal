@@ -1,1 +1,5 @@
-a=(2<4)?(2):(3)
+function hola(){
+a=2
+}
+
+prompt(a[])

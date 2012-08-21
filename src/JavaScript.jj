@@ -814,7 +814,7 @@ void DocumentStatement() :
 void Funcion() : //Declaracion de funciones
 {
 	Token t=null;
-	Vector< Symbol > vectorSimbolos=null;
+	Vector< Symbol > vectorSimbolos=new Vector< Symbol >();
 	Symbol simbolo=null;
 	int numeroParametros=0;
 }
@@ -1355,7 +1355,7 @@ Vector ArgumentList(Token nombre) : // lista de argumentos para una llamada a fu
   	Token t=null;
 	Expresion expr1=null;
 	Expresion expr2=null;
-	Vector< Expresion >v = null;
+	Vector< Expresion >v = new Vector < Expresion >();
 	Symbol temp=null;
 }
 {
@@ -1363,9 +1363,7 @@ Vector ArgumentList(Token nombre) : // lista de argumentos para una llamada a fu
   		
   }
   (expr1 = Expresion("")
-  {
-  		v=new Vector < Expresion >();
-  		
+  {  		
   		if (existeEnAlgunaTS(expr1._str))
   		{
   			v.add(expr1);
@@ -1388,11 +1386,12 @@ Vector ArgumentList(Token nombre) : // lista de argumentos para una llamada a fu
   		temp = tablageneral.obtenerSimbolo(nombre.image);
 		if(v==null && temp.numArgumentos == 0)
 		{
-			return null;
+			return v;
+
 		}
 		if(v==null)
 		{
-				v=new Vector < Expresion >();
+			return v;
 		}
   		if(temp.numArgumentos!=v.size())
   		{

@@ -706,7 +706,7 @@ public class eg1 implements eg1Constants {
 
   static final public void Funcion() throws ParseException {
         Token t=null;
-        Vector< Symbol > vectorSimbolos=null;
+        Vector< Symbol > vectorSimbolos=new Vector< Symbol >();
         Symbol simbolo=null;
         int numeroParametros=0;
     jj_consume_token(FUNCTION);
@@ -739,6 +739,7 @@ public class eg1 implements eg1Constants {
       ;
     }
     jj_consume_token(PARENIZQ);
+        System.out.println("PUTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+vectorSimbolos.size());
         simbolo.numArgumentos=numeroParametros;
         simbolo.vArgumentos=vectorSimbolos;
         tablageneral.insertarTS(t.image, simbolo); //Parametros locales
@@ -1339,7 +1340,7 @@ public class eg1 implements eg1Constants {
         Token t=null;
         Expresion expr1=null;
         Expresion expr2=null;
-        Vector< Expresion >v = null;
+        Vector< Expresion >v = new Vector < Expresion >();
         Symbol temp=null;
 
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1348,8 +1349,6 @@ public class eg1 implements eg1Constants {
     case STRING_LITERAL:
     case PARENDRCHA:
       expr1 = Expresion("");
-                v=new Vector < Expresion >();
-
                 if (existeEnAlgunaTS(expr1._str))
                 {
                         v.add(expr1);
@@ -1385,11 +1384,12 @@ public class eg1 implements eg1Constants {
                 temp = tablageneral.obtenerSimbolo(nombre.image);
                 if(v==null && temp.numArgumentos == 0)
                 {
-                        {if (true) return null;}
+                        {if (true) return v;}
+
                 }
                 if(v==null)
                 {
-                                v=new Vector < Expresion >();
+                        {if (true) return v;}
                 }
                 if(temp.numArgumentos!=v.size())
                 {
@@ -1485,15 +1485,15 @@ public class eg1 implements eg1Constants {
     finally { jj_save(4, xla); }
   }
 
+  static private boolean jj_3R_20() {
+    if (jj_scan_token(AND)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_12() {
     if (jj_scan_token(IDENTIFICADOR)) return true;
     if (jj_scan_token(CORCHETEDRCHA)) return true;
     if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_20() {
-    if (jj_scan_token(AND)) return true;
     return false;
   }
 
@@ -1546,11 +1546,6 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
-  static private boolean jj_3R_32() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_22() {
     if (jj_scan_token(MENOR)) return true;
     return false;
@@ -1558,6 +1553,11 @@ public class eg1 implements eg1Constants {
 
   static private boolean jj_3R_14() {
     if (jj_scan_token(VAR)) return true;
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_32() {
     if (jj_scan_token(IDENTIFICADOR)) return true;
     return false;
   }
@@ -1578,6 +1578,16 @@ public class eg1 implements eg1Constants {
     return false;
   }
 
+  static private boolean jj_3R_23() {
+    if (jj_3R_25()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_26()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
   static private boolean jj_3_1() {
     if (jj_3R_10()) return true;
     return false;
@@ -1595,16 +1605,6 @@ public class eg1 implements eg1Constants {
     if (jj_3R_34()) return true;
     }
     }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_23() {
-    if (jj_3R_25()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_26()) { jj_scanpos = xsp; break; }
     }
     return false;
   }

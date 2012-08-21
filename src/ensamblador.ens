@@ -1,40 +1,13 @@
 ORG 0
 MOVE #65432, .SP
 MOVE .SP, .IX ; .IX Puntero de marco de pila
-ADD #-6, .SP
+ADD #-0, .SP
 MOVE .A, .SP
-MOVE #99,#-1[.IX]
-MOVE #-1[.IX], #-0[.IX]; Moviendo bloque
 br /etq1 ;Etiqueta Goto
 hola:
 MOVE .SP, .IX
-ADD #-6, .SP
+ADD #-0, .SP
 MOVE .A, .SP
-MOVE #666,#-2[.IX]
-MOVE #-2[.IX], #-1[.IX]; Moviendo bloque
-MOVE [.IX], .IY; ReturnFuncion
-MOVE .IX, .IY ; EmPIEZA AQUIIIIIIIII 
-ADD #4, .IY
-MOVE .A, .IY
-MOVE #-1[.IX], #-0[.IY]; Moviendo bloque
-MOVE .IX, .SP
-RET
-etq1: NOP;Etiqueta IFs
-MOVE #1,#-4[.IX]
-MOVE .SP, .R2
-SUB .SP, #4
-MOVE .A, .SP
-PUSH #-4[.IX]
-MOVE .R2, .SP
-SUB .IX,#5
-PUSH .A; Apilando donde se guardara el retorno funcion
-PUSH .SR
-PUSH .IX
-CALL /hola; SALTO A PROGRAMA
-POP .IX
-POP .SR
-POP .R0; Sacando el DIR VALOR retorno
-MOVE #-2[.IX], #-3[.IX]; Moviendo bloque
 HALT ; Se terminara la ejecucion
 ORG 11800
 cad_cierto: DATA "true"
