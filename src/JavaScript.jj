@@ -333,7 +333,7 @@ public class eg1
 	      }
 	      catch (Error e)
 	      {
-	        System.out.println("Oops.");
+	        System.out.println("Error Sintactico ó Semántico, gañan.");
 	        System.out.println(e.getMessage());
 	        return;
 	      }
@@ -802,7 +802,7 @@ void DocumentStatement() :
 {
     < DOCUMENT > < PUNTO > < WRITE > "(" expr=Expresion("") ")"
     {
-    		System.out.println("\timprime "+ expr._str);
+    		System.out.println("\tIMPRIME "+ expr._str);
     		Tercetos ter = new Tercetos();
 			tupla_Tercetos tupla = new tupla_Tercetos(tablaactiva,ter.putCadena(expr._str));
 			lista.add(tupla);
@@ -814,7 +814,7 @@ void DocumentStatement() :
 void Funcion() : //Declaracion de funciones
 {
 	Token t=null;
-	Vector< Symbol > vectorSimbolos=new Vector< Symbol >();
+	Vector< Symbol > vectorSimbolos=new Vector < Symbol >();
 	Symbol simbolo=null;
 	int numeroParametros=0;
 }
@@ -958,31 +958,23 @@ void VariableDeclarator() :
      	(< ASIGNACION > expr = Expresion(t.image)
      	{
      	  	if(expr._tipo==CADENA)     	  	{
+     	  		System.out.println("lo que contiene"+expr._str);
      	  	  usarAsigCadena(t.image, expr._str);
      	  	}else     	  	{     	  	  usarASIG(t.image, expr._str);
      	  	}
 		})?
   |
-		t = < IDENTIFICADOR >
-					{// no estabamos metiendo este identificador en la TS
-					// creo que habria que mirar primero si está en la tabla, si no no se inserta, seguramente haya que com
-						if(!existeEnAlgunaTS(t.image))						{
-						  	simbolo=new Symbol(t.image, t.beginLine, ENTERO);
-     						tablaactiva.insertarTS(t.image, simbolo);
-     					}
-     				}
-
-			< ASIGNACION > expr = Expresion(t.image)
+		t = < IDENTIFICADOR > < ASIGNACION > expr = Expresion(t.image)
    		{
    				if(expr._str!="")
    				{
-   						
    					if (!tablaactiva.buscar(t.image) && !tablageneral.buscar(t.image))
    					{
    						simbolo = new Symbol(t.image, t.beginLine, ENTERO);
    						tablageneral.insertarTS(t.image, simbolo);
-   				}
+   					}
    				//Esto hay que arreglarlo
+   				//Si los tipos son distintos hay que ponerle el valor del de la derecha
    				System.out.println("\t"+t.image+"="+expr._str+"; asignacionVariable");
    				if(expr._tipo==CADENA)
      	  		{
@@ -1228,7 +1220,7 @@ Expresion VectorExpression() :
 				
 		if(expr2!=null)
 		{
-			System.out.println("\t"+tmp+" = "+expr._str+ "[ "+expr2._str+" ]");
+			System.out.println("\tse comprueba indice en final\n"+tmp+" = "+expr._str+ "[ "+expr2._str+" ]");
 			simbolo=new Symbol(tmp, t.beginLine, ENTERO);
 			tablaactiva.insertarTS(tmp,simbolo);
 			Expresion resultado = new Expresion(tmp, ENTERO);
@@ -1253,9 +1245,12 @@ Expresion VectorExpression() :
 			ter = new Tercetos();
  	   		tupla = new tupla_Tercetos(tablaactiva,ter.sacaDeArray(expr._str,tmp,expr2._str));
 			lista.add(tupla);
+			Expresion expr4=new Expresion(tmp,ENTERO);
+			return expr4;
 		}
-		Expresion expr4=new Expresion(tmp,ENTERO);
-		return expr4;
+		if(t!=null)		{			Expresion expr4=new Expresion(expr._str,VECTOR);
+			return expr4;
+		}
 	}
 	)*
 	{
@@ -1292,7 +1287,7 @@ Expresion FunctionExpression() :
 
 Vector LlamadaFuncion(Token nombre) : //Solo se la llama desde functionexpresion
 {
-	Vector< Expresion > v = null;
+	Vector< Expresion > v = new Vector< Expresion >();
 }
 {
    "("
@@ -1319,6 +1314,7 @@ Vector LlamadaFuncion(Token nombre) : //Solo se la llama desde functionexpresion
 		String retorno = nuevaTmp();
 		Symbol retornoSim = new Symbol(retorno,1234,ENTERO);
 		tablaactiva.insertarTS(retorno,retornoSim);
+
 
 		
 				
@@ -1355,7 +1351,7 @@ Vector ArgumentList(Token nombre) : // lista de argumentos para una llamada a fu
   	Token t=null;
 	Expresion expr1=null;
 	Expresion expr2=null;
-	Vector< Expresion >v = new Vector < Expresion >();
+	Vector< Expresion >v = new Vector< Expresion >();
 	Symbol temp=null;
 }
 {
@@ -1363,13 +1359,15 @@ Vector ArgumentList(Token nombre) : // lista de argumentos para una llamada a fu
   		
   }
   (expr1 = Expresion("")
-  {  		
+  {
+  		v=new Vector < Expresion >();
+  		
   		if (existeEnAlgunaTS(expr1._str))
   		{
   			v.add(expr1);
   		}else
   		{
-  			throw new Error("Error en linea: "+nombre.beginLine+", Los parametros tienen que ser declarados antes de usarlos");
+  			throw new Error("Error en la linea ("+nombre.beginLine+"): El(Los) parametro(s) tiene(n) que ser declarado(s) antes de usarlo(s)");
   		}
   } ("," expr2 =  Expresion("")
   {
@@ -1378,7 +1376,7 @@ Vector ArgumentList(Token nombre) : // lista de argumentos para una llamada a fu
   			v.add(expr2);
   		}else
   		{
-  			throw new Error("Error en linea: "+nombre.beginLine+" Los parametros tienen que ser declarados antes de usarlos");
+  			throw new Error("Error en la linea ("+nombre.beginLine+"): El(Los) parametro(s) tiene(n) que ser declarado(s) antes de usarlo(s)");
   		}
   }
   )*)?
@@ -1387,7 +1385,6 @@ Vector ArgumentList(Token nombre) : // lista de argumentos para una llamada a fu
 		if(v==null && temp.numArgumentos == 0)
 		{
 			return v;
-
 		}
 		if(v==null)
 		{
@@ -1395,7 +1392,7 @@ Vector ArgumentList(Token nombre) : // lista de argumentos para una llamada a fu
 		}
   		if(temp.numArgumentos!=v.size())
   		{
-  			throw new Error("Numero de argumentos de la llamada a funcion en "+nombre.beginLine+" no coincide con los de la declaración");
+  			throw new Error("Error en la linea ("+nombre.beginLine+"): El(Los) parametro(s) de la llamada no coincide(n) con el(los) de la declaración");
   			
   		}
 		else
@@ -1439,9 +1436,13 @@ Expresion PrimaryExpression() :
 			}catch (java.lang.NumberFormatException exc){
 				//throw new Error("El String a transformar tiene que ser un entero");
 			}
-		st = new Expresion(cadena, t.kind);
-   		st.t = t;}
-
+		String tmp = nuevaTmp();
+		Symbol simbolo = new Symbol(tmp, t.beginLine, CADENA);
+		usarAsigCadena(tmp, cadena);
+		tablaactiva.insertarTS(tmp, simbolo);
+		st = new Expresion(tmp, t.kind);
+   		st.t = t;
+   		}
   )
  {return st;}
   

@@ -1,13 +1,21 @@
 ORG 0
 MOVE #65432, .SP
 MOVE .SP, .IX ; .IX Puntero de marco de pila
-ADD #-0, .SP
+ADD #-5, .SP
 MOVE .A, .SP
-br /etq1 ;Etiqueta Goto
-hola:
-MOVE .SP, .IX
-ADD #-0, .SP
-MOVE .A, .SP
+MOVE #1,#-0[.IX]
+MOVE #1,#-1[.IX]
+AND #-0[.IX], #-1[.IX]
+MOVE .A, #-2[.IX]
+CMP #-2[.IX], /v_cierto 
+BNZ /etq1
+MOVE #12000,#-3[.IX]
+MOVE #-3[.IX],.R9
+WRSTR [.R9]
+etq1: NOP;Etiqueta IFs
+MOVE #12024,#-4[.IX]
+MOVE #-4[.IX],.R9
+WRSTR [.R9]
 HALT ; Se terminara la ejecucion
 ORG 11800
 cad_cierto: DATA "true"
@@ -15,3 +23,7 @@ cad_falso: DATA "false"
 v_cierto: DATA 1
 v_falso: DATA 0
 salto_lin: DATA "\n"
+
+ORG 12000
+tmp4: DATA "ESTOY HASTA LA POLLAxxx"
+tmp5: DATA "GAFOTAS"

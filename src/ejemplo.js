@@ -1,5 +1,1 @@
-function hola(){
-a=2
-}
-
-prompt(a[])
+a=(2<4)?(2):(3)

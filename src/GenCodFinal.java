@@ -493,9 +493,9 @@ public class GenCodFinal {
 			// 1- Anadimos a la lista de DATA esta etiqueta con su valor
 			lista_data.add(op1 +": DATA "+ "\""+ op2 + "\"" + "\n");
 			// Elimino las comillas que envuelven al string
-			op2=op2.substring(1, op2.length()-1);
+			//op2=op2.substring(0, op2.length());
 			// 2- Guardo la direccion a la cadena en el marco de pila actual
-			bw.write("MOVE #"+ count_char +",#-" + ambito_terceto.getDesplazamiento(op1) + "[.IX]\n");
+			bw.write("MOVE #"+ count_char+",#-" + ambito_terceto.getDesplazamiento(op1) + "[.IX]\n");
 			// Cuento el numero de elem del string para mover el desplazamiento
 		    // Texto que vamos a buscar
 		    String sTextoBuscado = "\\n";	// solo ocupa un espacio pero son 2 char
@@ -505,11 +505,11 @@ public class GenCodFinal {
 		      op2 = op2.substring(op2.indexOf(sTextoBuscado)+sTextoBuscado.length(),op2.length());
 		      contador++;
 		    }
-			// Ajustamos le desplazamiento teniendo en cuenta todo
-		    if ((op2.length()==0) && (contador!=0)) {		// caso "\n"
-				count_char= count_char + contador + 1;
+			// Ajustamos el desplazamiento teniendo en cuenta todo
+		    if ((op2.length()==0) && (contador!=0)) {// caso "\n"
+				count_char= count_char + contador+1;
 		    } else {
-				count_char= count_char + op2.length() + contador + 1;	
+				count_char= count_char + op2.length() + contador+1;	
 		    }
 			// prueba impresion
 			//bw.write("MOVE #-" + simbolo_op1.GetDesplazamiento() + "[.IX], .IY\n");
@@ -937,6 +937,8 @@ public class GenCodFinal {
 				bw.write("ADD #4, .IY\n");
 				bw.write("MOVE .A, .IY\n");
 				CopiaBloqMem(".IX", Despla1, ".IY", 0, tamanio);
+				
+				
 			}  else if (!ambito_terceto.existeClave(op1)) {	// op1 no local
 				// TODO NO FUNCIONA
 				// Para que sirve esta rama? Siempre hay que poner la dir de retorno en el registro de activacion actual.
